@@ -68,6 +68,7 @@
 #include <QtCore/qtimer.h>
 
 // valami123
+// sudo setcap cap_net_raw+ep ./bletest_pizero
 
 int main(int argc, char *argv[])
 {
@@ -79,7 +80,9 @@ int main(int argc, char *argv[])
 #endif
 
     QUuid srv1("00001234-0000-1000-8000-00805F9B34FB");
-    QUuid char2("00001235-0000-1000-8000-00805F9B34FB");
+    QUuid char1("00001235-0000-1000-8000-00805F9B34FB");
+    QUuid char2("00001236-0000-1000-8000-00805F9B34FB");
+
     //! [Advertising Data]
     QLowEnergyAdvertisingData advertisingData;
     advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
@@ -89,13 +92,13 @@ int main(int argc, char *argv[])
     //! [Advertising Data]
 
     //! [Service Data]
-    QLowEnergyCharacteristicData charData;
-    charData.setUuid(QBluetoothUuid::HeartRateMeasurement);
-    charData.setValue(QByteArray(2, 0));
-    charData.setProperties(QLowEnergyCharacteristic::Notify);
-    const QLowEnergyDescriptorData clientConfig(QBluetoothUuid::ClientCharacteristicConfiguration,
+    QLowEnergyCharacteristicData charData1;
+    charData1.setUuid(char1);
+    charData1.setValue(QByteArray(2, 0));
+    charData1.setProperties(QLowEnergyCharacteristic::Notify);
+    const QLowEnergyDescriptorData clientConfig1(QBluetoothUuid::ClientCharacteristicConfiguration,
                                                 QByteArray(2, 0));
-    charData.addDescriptor(clientConfig);
+    charData1.addDescriptor(clientConfig1);
 
     QLowEnergyCharacteristicData charData2;
     charData2.setUuid(char2);
@@ -107,8 +110,8 @@ int main(int argc, char *argv[])
 
     QLowEnergyServiceData serviceData;
     serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
-    serviceData.setUuid(srv1);//QBluetoothUuid::HeartRate);
-    serviceData.addCharacteristic(charData);
+    serviceData.setUuid(srv1);
+    serviceData.addCharacteristic(charData1);
     serviceData.addCharacteristic(charData2);
     //! [Service Data]
 
@@ -123,12 +126,12 @@ int main(int argc, char *argv[])
     QTimer heartbeatTimer;
     quint8 currentHeartRate = 60;
     enum ValueChange { ValueUp, ValueDown } valueChange = ValueUp;
-    const auto heartbeatProvider = [&service, &currentHeartRate, &valueChange]() {
+    const auto heartbeatProvider = [&service, &currentHeartRate, &valueChange, char1]() {
         QByteArray value;
         value.append(char(0)); // Flags that specify the format of the value.
         value.append(char(currentHeartRate)); // Actual value.
         QLowEnergyCharacteristic characteristic
-                = service->characteristic(QBluetoothUuid::HeartRateMeasurement);
+                = service->characteristic(char1);
         Q_ASSERT(characteristic.isValid());
         service->writeCharacteristic(characteristic, value); // Potentially causes notification.
         if (currentHeartRate == 60)
