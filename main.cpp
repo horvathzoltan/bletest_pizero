@@ -69,6 +69,11 @@
 
 // valami123
 // sudo setcap cap_net_raw+ep ./bletest_pizero
+//void written1(const QLowEnergyCharacteristic &characteristic,
+//                           const QByteArray &newValue)
+//{
+//    qDebug()<<"Write";
+//};
 
 int main(int argc, char *argv[])
 {
@@ -79,9 +84,12 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 #endif
 
+     qDebug()<<"Start";
+
     QUuid srv1("00001234-0000-1000-8000-00805F9B34FB");
     QUuid char1("00001235-0000-1000-8000-00805F9B34FB");
     QUuid char2("00001236-0000-1000-8000-00805F9B34FB");
+    QUuid char3("00001237-0000-1000-8000-00805F9B34FB");
 
     //! [Advertising Data]
     QLowEnergyAdvertisingData advertisingData;
@@ -92,6 +100,8 @@ int main(int argc, char *argv[])
     //! [Advertising Data]
 
     //! [Service Data]
+
+    //! [Characteristic1 + Descriptor1]
     QLowEnergyCharacteristicData charData1;
     charData1.setUuid(char1);
     charData1.setValue(QByteArray(2, 0));
@@ -100,6 +110,7 @@ int main(int argc, char *argv[])
                                                 QByteArray(2, 0));
     charData1.addDescriptor(clientConfig1);
 
+    //! [Characteristic2 + Descriptor2]
     QLowEnergyCharacteristicData charData2;
     charData2.setUuid(char2);
     charData2.setValue(QByteArray(2, 0));
@@ -108,16 +119,44 @@ int main(int argc, char *argv[])
                                                 QByteArray(2, 0));
     charData2.addDescriptor(clientConfig2);
 
+    //! [Characteristic3 + Descriptor3]
+    QLowEnergyCharacteristicData charData3;
+    charData3.setUuid(char3);
+    charData3.setValue(QByteArray(2, 0));
+    charData3.setProperties(QLowEnergyCharacteristic::Write);
+    const QLowEnergyDescriptorData clientConfig3(QBluetoothUuid::ClientCharacteristicConfiguration,
+                                                QByteArray(2, 0));
+    charData3.addDescriptor(clientConfig3);
+
     QLowEnergyServiceData serviceData;
     serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
     serviceData.setUuid(srv1);
     serviceData.addCharacteristic(charData1);
     serviceData.addCharacteristic(charData2);
+    serviceData.addCharacteristic(charData3);
     //! [Service Data]
+
+    auto read = [](const QLowEnergyCharacteristic &characteristic,
+                               const QByteArray &newValue)
+    {
+         qDebug()<<"Read:"+QString(newValue);
+    };
+
+    auto changed = [](const QLowEnergyCharacteristic &characteristic,
+                               const QByteArray &newValue)
+    {
+         qDebug()<<"Changed:"+QString(newValue);
+    };
 
     //! [Start Advertising]
     const QScopedPointer<QLowEnergyController> leController(QLowEnergyController::createPeripheral());
+    //auto s = leController->addService(serviceData);
     QScopedPointer<QLowEnergyService> service(leController->addService(serviceData));
+    QObject::connect(service.get(), &QLowEnergyService::characteristicChanged, changed);
+    QObject::connect(service.get(), &QLowEnergyService::characteristicRead, read);
+
+    //QObject::connect(s, &QLowEnergyService::characteristicWritten, written);
+
     leController->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData,
                                    advertisingData);
     //! [Start Advertising]
@@ -145,25 +184,33 @@ int main(int argc, char *argv[])
     };
     QObject::connect(&heartbeatTimer, &QTimer::timeout, heartbeatProvider);
     heartbeatTimer.start(1000);
-    //! [Provide Heartbeat]
 
+    //! [Provide Heartbeat]
     QByteArray value2;
     value2.append(0x12); // Flags that specify the format of the value.
     value2.append(0x34); // Actual value.
-    QLowEnergyCharacteristic characteristic2
-            = service->characteristic(char2);
+    QLowEnergyCharacteristic characteristic2 = service->characteristic(char2);
     Q_ASSERT(characteristic2.isValid());
-    service->writeCharacteristic(characteristic2, value2); // Potentially causes notification.
+    service->writeCharacteristic(characteristic2, value2);
 
-
-    auto reconnect = [&leController, advertisingData, &service, serviceData]()
+    auto reconnect = [&leController, advertisingData, &service, serviceData, &changed, &read]()
     {
         service.reset(leController->addService(serviceData));
-        if (!service.isNull())
+        if (!service.isNull()){
+            QObject::connect(service.get(), &QLowEnergyService::characteristicChanged, changed);
+            QObject::connect(service.get(), &QLowEnergyService::characteristicRead, read);
+
             leController->startAdvertising(QLowEnergyAdvertisingParameters(),
                                            advertisingData, advertisingData);
+        }
     };
     QObject::connect(leController.data(), &QLowEnergyController::disconnected, reconnect);
+
+
+
+
+    //auto s = service.get();
+
 
     return app.exec();
 }
