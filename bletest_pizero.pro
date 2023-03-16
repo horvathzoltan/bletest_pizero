@@ -9,7 +9,9 @@ CONFIG -= app_bundle
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        bleapi.cpp \
         bleserver.cpp \
+        dowork.cpp \
         main.cpp
 
 LIBS += -L/home/zoli/pizero_bullseye/sysroot/usr/lib/arm-linux-gnueabihf
@@ -20,4 +22,6 @@ else: unix:!android: target.path = /home/pi/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    bleserver.h
+    bleapi.h \
+    bleserver.h \
+    dowork.h

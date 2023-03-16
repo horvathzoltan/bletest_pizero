@@ -17,7 +17,6 @@ void BleServer::SetAdvertisingData()
     _advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
     _advertisingData.setIncludePowerLevel(true);
     _advertisingData.setLocalName(_serviceName);
-    //auto a = QList<QBluetoothUuid>() << _serviceUuid;
     _advertisingData.setServices({_serviceUuid});
 }
 
@@ -34,31 +33,33 @@ void BleServer::AddCharacteristic(
 {
     QLowEnergyCharacteristicData charData;
     charData.setUuid(charUuid);
-    charData.setValue(b);//QByteArray(2, 0));
+    charData.setValue(b);
     charData.setProperties(props);
     const QLowEnergyDescriptorData
             descriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,b);
-                                                //QByteArray(2, 0));
     charData.addDescriptor(descriptorData);
 
     _serviceData.addCharacteristic(charData);
 }
 
+
+void BleServer::Changed(const QLowEnergyCharacteristic &characteristic,
+             const QByteArray &newValue)
+{
+    emit CharacteristicChanged(characteristic.uuid(), QString(newValue));
+}
+
 void BleServer::Connect()
 {
-    auto changed = [](const QLowEnergyCharacteristic &characteristic,
-                               const QByteArray &newValue)
-    {
-         qDebug()<<"Changed:["+QString::number(newValue[0])+"]"+QString(newValue);
-    };
-
     _service.reset(_controller->addService(_serviceData));
     if (!_service.isNull()){
-        QObject::connect(_service.get(), &QLowEnergyService::characteristicChanged, changed);
+        QObject::connect(_service.get(),
+                         &QLowEnergyService::characteristicChanged,
+                         this,
+                         &BleServer::Changed);
 
         qDebug()<<"StartAdvertising";
-        _controller->startAdvertising(QLowEnergyAdvertisingParameters(),
-                                       _advertisingData, _advertisingData);
+        _controller->startAdvertising(QLowEnergyAdvertisingParameters(), _advertisingData, _advertisingData);
     }
 }
 
@@ -70,7 +71,7 @@ void BleServer::StartAdvertising()
     QObject::connect(_controller.data(), &QLowEnergyController::disconnected, reconnect);
 }
 
-void BleServer::WriteCharacteriscic(QUuid characteristicUuid, const QByteArray &value)
+void BleServer::WriteCharacteristic(QUuid characteristicUuid, const QByteArray &value)
 {
     if(!_service) return;
     QLowEnergyCharacteristic characteristic

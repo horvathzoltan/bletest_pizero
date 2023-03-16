@@ -48,7 +48,9 @@
 **
 ****************************************************************************/
 
-#include "bleserver.h"
+#include "bleapi.h"
+//#include "bleserver.h"
+#include "dowork.h"
 
 #include <QtBluetooth/qlowenergyadvertisingdata.h>
 #include <QtBluetooth/qlowenergyadvertisingparameters.h>
@@ -69,65 +71,31 @@
 #include <QtCore/qscopedpointer.h>
 #include <QtCore/qtimer.h>
 
-// valami123
 // sudo setcap cap_net_raw+ep ./bletest_pizero
-//void written1(const QLowEnergyCharacteristic &characteristic,
-//                           const QByteArray &newValue)
-//{
-//    qDebug()<<"Write";
-//};
+// sshpass -p "qw" ssh pi@172.16.1.14 setcap cap_net_raw+ep /home/pi/bletest_pizero/bin/bletest_pizero
+// echo "qw" | sudo -S -k setcap cap_net_raw+eip /home/pi/bletest_pizero/bin/bletest_pizero
+// echo "qw" | sudo -S -k setcap cap_net_raw,cap_net_admin+eip /home/pi/bletest_pizero/bin/bletest_pizero
+// set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
 
 int main(int argc, char *argv[])
 {
-    //QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth* = true"));
-#ifndef Q_OS_ANDROID
+    QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
+
     QCoreApplication app(argc, argv);
-#else
-    QGuiApplication app(argc, argv);
-#endif
 
     qDebug()<<"Start";
 
-    QUuid serviceUuid("00001234-0000-1000-8000-00805F9B34FB");
-    QUuid char1("00001235-0000-1000-8000-00805F9B34FB");
-    QUuid char2("00001236-0000-1000-8000-00805F9B34FB");
-    QUuid char3("00001237-0000-1000-8000-00805F9B34FB");
+    QString user = qgetenv("USER");
 
-    BleServer bleServer(serviceUuid, QStringLiteral("TesztService1"));
+    qDebug()<<"USER:"<<user;
 
-    bleServer.AddCharacteristic(char1, QByteArray(2, 0), QLowEnergyCharacteristic::Notify);
-    bleServer.AddCharacteristic(char2, QByteArray(2, 0), QLowEnergyCharacteristic::Read);
-    bleServer.AddCharacteristic(char3, QByteArray(2, 0), QLowEnergyCharacteristic::Write);
+    BleApi bleApi("TesztService1");
 
-    bleServer.StartAdvertising();
+    bleApi.AddRequest("maki", DoWork::maki);
+    bleApi.AddRequest("miki", DoWork::miki);
 
-    //! [Provide Heartbeat]
-    QTimer heartbeatTimer;
-    quint8 currentHeartRate = 60;
-    enum ValueChange { ValueUp, ValueDown } valueChange = ValueUp;
-    const auto heartbeatProvider = [&bleServer, &currentHeartRate, &valueChange, char1]() {
-        QByteArray value;
-        value.append(char(0)); // Flags that specify the format of the value.
-        value.append(char(currentHeartRate)); // Actual value.
-        bleServer.WriteCharacteriscic(char1, value);
-        if (currentHeartRate == 60)
-            valueChange = ValueUp;
-        else if (currentHeartRate == 100)
-            valueChange = ValueDown;
-        if (valueChange == ValueUp)
-            ++currentHeartRate;
-        else
-            --currentHeartRate;
-    };
-    QObject::connect(&heartbeatTimer, &QTimer::timeout, heartbeatProvider);
-    heartbeatTimer.start(1000);
+    bleApi.Start();
 
-    //! [Provide Heartbeat]
-    QByteArray value2;
-    value2.append(0x12); // Flags that specify the format of the value.
-    value2.append(0x34); // Actual value.
-
-    bleServer.WriteCharacteriscic(char2, value2);
-
-    return app.exec();
+    int e = app.exec();
+    return e;
 }

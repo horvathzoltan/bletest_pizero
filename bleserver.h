@@ -8,8 +8,10 @@
 
 
 
-class BleServer
+class BleServer: public QObject
 {
+    Q_OBJECT
+
 private:
     QUuid _serviceUuid;
     QString _serviceName;
@@ -27,7 +29,14 @@ public:
                            const QByteArray& b,
                            QLowEnergyCharacteristic::PropertyType props);
     void StartAdvertising();
-    void WriteCharacteriscic(QUuid serviceUuid, const QByteArray& value);
+    void WriteCharacteristic(QUuid serviceUuid, const QByteArray& value);
+
+signals:
+    void CharacteristicChanged(QBluetoothUuid uuid, const QString &value);
+
+public slots:
+    void Changed(const QLowEnergyCharacteristic &characteristic,
+                 const QByteArray &newValue);
 };
 
 #endif // BLESERVER_H
