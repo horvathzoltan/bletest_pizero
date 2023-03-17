@@ -49,7 +49,6 @@
 ****************************************************************************/
 
 #include "bleapi.h"
-//#include "bleserver.h"
 #include "dowork.h"
 
 #include <QtBluetooth/qlowenergyadvertisingdata.h>
@@ -71,11 +70,24 @@
 #include <QtCore/qscopedpointer.h>
 #include <QtCore/qtimer.h>
 
-// sudo setcap cap_net_raw+ep ./bletest_pizero
-// sshpass -p "qw" ssh pi@172.16.1.14 setcap cap_net_raw+ep /home/pi/bletest_pizero/bin/bletest_pizero
-// echo "qw" | sudo -S -k setcap cap_net_raw+eip /home/pi/bletest_pizero/bin/bletest_pizero
-// echo "qw" | sudo -S -k setcap cap_net_raw,cap_net_admin+eip /home/pi/bletest_pizero/bin/bletest_pizero
-// set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
+/*
+ * edit/preferences/debugger/gdb/Additional Startup Program
+ * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
+ *
+ * So, the solution is very simple, apart from adding cap_net_admin,cap_net_raw+eip to gdb, you have also apply this to your shell. i.e. setcap cap_net_admin,cap_net_raw+eip /bin/bash
+ * // ez a program, amit futtatunk
+ * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /home/pi/bletest_pizero/bin/bletest_pizero
+ * // ugyanez a devicen kiadva -> projects/run/deployment/custom remote command
+ * echo "qw" | sudo -S -k setcap cap_net_admin,cap_net_raw+eip /home/pi/bletest_pizero/bin/bletest_pizero
+ *
+ * a debuggernek és a shellnek is kell cap
+ * // helyben a gdb fut
+ * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /usr/bin/gdb
+ * // a shell futtatja az egészet
+ * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /usr/bin/bash
+ * // remote debuggingnál a devicen a gdbserver fut
+ * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /usr/bin/gdbserver
+*/
 
 int main(int argc, char *argv[])
 {
