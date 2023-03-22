@@ -30,6 +30,7 @@ void BleApi::Start()
 bool  BleApi::AddRequest(const QString& name, BleApiFn func)
 {
     if(_functions.contains(name)) return false;
+    if(name.length()<2) return false;
     _functions.insert(name, func);
     return true;
 }
