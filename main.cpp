@@ -69,6 +69,7 @@
 #include <QtCore/qloggingcategory.h>
 #include <QtCore/qscopedpointer.h>
 #include <QtCore/qtimer.h>
+#include "nameof.h"
 
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
@@ -89,6 +90,8 @@
  * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /usr/bin/gdbserver
 */
 
+
+
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
@@ -103,9 +106,17 @@ int main(int argc, char *argv[])
 
     BleApi bleApi("TesztService1");
 
-    bleApi.AddRequest("maki", DoWork::maki);
-    bleApi.AddRequest("miki", DoWork::miki);
+    DoWork::init(&bleApi);
 
+    bleApi.addrequest(DoWork::miki);
+    bleApi.addrequest(DoWork::maki);
+    bleApi.addrequest(DoWork::commands);
+    bleApi.addrequest(DoWork::bommands);
+    bleApi.addrequest(DoWork::lasterr);
+
+    bleApi.AddRequest(0x17, DoWork::lasterr);
+    bleApi.AddRequest(0x18, DoWork::commands);
+    bleApi.AddRequest(0x19, DoWork::bommands);
     bleApi.Start();
 
     int e = app.exec();

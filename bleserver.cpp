@@ -79,3 +79,13 @@ void BleServer::WriteCharacteristic(QUuid characteristicUuid, const QByteArray &
     Q_ASSERT(characteristic.isValid());
     _service->writeCharacteristic(characteristic, value); // Potentially causes notification.
 }
+
+//QByteArray BleServer::ReadCharacteristic(QUuid characteristicUuid)
+//{
+//    QLowEnergyCharacteristic characteristic
+//            = _service->characteristic(characteristicUuid);
+//    Q_ASSERT(characteristic.isValid());
+//    QByteArray value;
+//    _service->characteristicRead(characteristic, value);
+//    return value;
+//}

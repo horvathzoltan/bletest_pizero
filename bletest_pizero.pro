@@ -12,6 +12,7 @@ SOURCES += \
         bleapi.cpp \
         bleserver.cpp \
         dowork.cpp \
+        global.cpp \
         main.cpp
 
 LIBS += -L/home/zoli/pizero_bullseye/sysroot/usr/lib/arm-linux-gnueabihf
@@ -24,4 +25,6 @@ else: unix:!android: target.path = /home/pi/$${TARGET}/bin
 HEADERS += \
     bleapi.h \
     bleserver.h \
-    dowork.h
+    dowork.h \
+    global.h \
+    nameof.h

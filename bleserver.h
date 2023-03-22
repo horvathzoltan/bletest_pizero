@@ -30,6 +30,7 @@ public:
                            QLowEnergyCharacteristic::PropertyType props);
     void StartAdvertising();
     void WriteCharacteristic(QUuid serviceUuid, const QByteArray& value);
+//    QByteArray ReadCharacteristic(QUuid serviceUuid);
 
 signals:
     void CharacteristicChanged(QBluetoothUuid uuid, const QString &value);
