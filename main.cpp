@@ -75,7 +75,7 @@
 #include "helpers/logger.h"
 #include "helpers/signalhelper.h"
 #include "helpers/commandlineparserhelper.h"
-
+#include "buildnumber.h"
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
  * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
@@ -106,17 +106,17 @@ int main(int argc, char *argv[])
     Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
 
 #if defined (STRING) && defined (TARGI)
-    auto poj = STRING(TARGI);
+    auto target = STRING(TARGI);
 #else
-    auto poj=QStringLiteral("ApplicationNameString");
+    auto target=QStringLiteral("ApplicationNameString");
 #endif
 
     QString user = qgetenv("USER");
-    zInfo(QStringLiteral("started ")+poj+" as "+user);
+    zInfo(QStringLiteral("started ")+target+" as "+user);
 
     QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName(poj);
-    QCoreApplication::setApplicationVersion("ApplicationVersionString");
+    QCoreApplication::setApplicationName(target);
+    QCoreApplication::setApplicationVersion(Buildnumber::toString());
     QCoreApplication::setOrganizationName("OrganizationNameString");
     QCoreApplication::setOrganizationDomain("OrganizationDomainString");
 
@@ -138,25 +138,31 @@ int main(int argc, char *argv[])
 
     DoWork::init({.bleApi = &bleApi, .test=test});
 
-    bleApi.addrequest(DoWork::miki);
-    bleApi.addrequest(DoWork::maki);
-//    bleApi.AddRequest("maki", DoWork::maki);
-//    bleApi.addrequest(DoWork::maki);
+//  bleApi.addrequest(DoWork::miki);
+//  bleApi.addrequest(DoWork::maki);
+//  bleApi.AddRequest("maki", DoWork::maki);
+//  bleApi.addrequest(DoWork::maki);
+
+    bleApi.addrequest(DoWork::lasterr);
     bleApi.addrequest(DoWork::commands);
     bleApi.addrequest(DoWork::bommands);
-    bleApi.addrequest(DoWork::lasterr);
+
+    bleApi.addrequest(DoWork::datalength);
+
     bleApi.addrequest(DoWork::hwinfo);
     bleApi.addrequest(DoWork::swinfo);
-    bleApi.addrequest(DoWork::buildnum);
+    bleApi.addrequest(DoWork::instance);
 
+// rövidített commandok
     bleApi.AddRequest(0x17, DoWork::lasterr);
     bleApi.AddRequest(0x18, DoWork::commands);
     bleApi.AddRequest(0x19, DoWork::bommands);
 
+    bleApi.AddRequest(0x40, DoWork::datalength);
+
     bleApi.AddRequest(0x51, DoWork::hwinfo);
     bleApi.AddRequest(0x52, DoWork::swinfo);
-    bleApi.AddRequest(0x53, DoWork::buildnum);
-
+    bleApi.AddRequest(0x53, DoWork::instance);
 
     if(DoWork::isTest())
     {

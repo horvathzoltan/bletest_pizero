@@ -1,8 +1,10 @@
 #include "dowork.h"
 #include "global.h"
 #include "helpers/logger.h"
+#include "helpers/textfilehelper.h"
+#include <QCoreApplication>
+#include <QDir>
 #include <QString>
-#include "buildnumber.h"
 
 extern Status status;
 
@@ -72,19 +74,35 @@ void DoWork::Test()
 /**/
 
 QByteArray DoWork::hwinfo()
-{
-    auto a = QStringLiteral("hwinfo").toUtf8();
+{    
+    auto appdir = QCoreApplication::applicationDirPath();
+    auto hwinfoFn = QDir(appdir).filePath("hwinfo.csv"); //b8:27:eb:96:ca:bf;1010;logger_2v0
+    QString hwinfo;
+    bool ok = TextFileHelper::Load(hwinfoFn, &hwinfo);
+    QByteArray a;
+    if(ok){
+        a = hwinfo.toUtf8();
+        status.set(Status::OK);
+    } else {
+        status.set(Status::Err, TextFileHelper::LastError());
+    }
+
     return a;
 }
 
 QByteArray DoWork::swinfo()
 {
-    auto a = QStringLiteral("swinfo").toUtf8();
+    QString d = QCoreApplication::applicationName();
+    QString b = QCoreApplication::applicationVersion();
+
+    auto a = (d+':'+b).toUtf8();
     return a;
 }
 
-QByteArray DoWork::buildnum()
+QByteArray DoWork::instance()
 {
-    auto a = Buildnumber::toString().toUtf8();
+    QByteArray a = QStringLiteral("instance").toUtf8();
+
     return a;
 }
+

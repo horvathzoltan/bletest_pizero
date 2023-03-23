@@ -28,13 +28,11 @@ public:
     static QByteArray bommands(); //0x19
     static QByteArray lasterr(); //0x17
     static QByteArray hwinfo(); //0x51
-    static QByteArray swinfo(); //0x52
-    static QByteArray buildnum(); //0x53
+    static QByteArray swinfo(); //0x52    
+    static QByteArray instance(); //0x53
 
-    static QByteArray type();
-    static QByteArray version();
-    static QByteArray datalength();
-    static QByteArray data();
+    static QByteArray datalength(); //0x40
+    static QByteArray data(); //0x37
 
     // beállítások, kulcs-érték pár mentése
     //static bool settings1(const QByteArray& data);

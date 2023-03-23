@@ -20,6 +20,7 @@ SOURCES += \
         helpers/commandlineparserhelper.cpp \
         helpers/logger.cpp \
         helpers/signalhelper.cpp \
+        helpers/textfilehelper.cpp \
         main.cpp
 
 HEADERS += \
@@ -32,6 +33,7 @@ HEADERS += \
     helpers/logger.h \
     helpers/signalhelper.h \
     helpers/stringify.h \
+    helpers/textfilehelper.h \
     nameof.h
 
 contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
