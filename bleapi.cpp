@@ -29,6 +29,7 @@ void BleApi::Start()
 
 bool  BleApi::AddRequest(const QString& name, BleApiFn func)
 {
+    if(func==nullptr) return false;
     if(_functions.contains(name)) return false;
     if(name.length()<2) return false;
     _functions.insert(name, func);
@@ -37,6 +38,7 @@ bool  BleApi::AddRequest(const QString& name, BleApiFn func)
 
 bool BleApi::AddRequest(quint8 cmd, BleApiFn func)
 {
+    if(func==nullptr) return false;
     if(_bfunctions.contains(cmd)) return false;
     _bfunctions.insert(cmd, func);
     return true;
@@ -54,10 +56,9 @@ QStringList BleApi::BRequests() {
         auto v = _functions[fk];
         unsigned char bk = _bfunctions.key(v);
         if(bk>0){
-
             b<<"0x"+QString::number(bk, 16)+":"+fk;
         } else{
-            qDebug()<<"nincs byte a commandhoz:"+fk;
+            //qDebug()<<"nincs byte a commandhoz:"+fk;
         }
 
     }
@@ -67,9 +68,30 @@ QStringList BleApi::BRequests() {
 
 void BleApi::Changed(QBluetoothUuid uuid, const QString& value)
 {
-    if(uuid != _char_request) return;
-    QMap<QString, QByteArray (*)()>::iterator function = _functions.find(value);
-    if(function ==_functions.end()) return;
+    if(uuid != _char_request) return;    
+    //if(value.isEmpty()) return;
+    auto r = Execute(value);
+    _bleServer->WriteCharacteristic(_char_response, r);
+}
+
+QByteArray BleApi::Execute(const QString& value)
+{
+    if(value.isEmpty()) return{};
+    if(value.length()==1)
+        return Execute(value.at(0));
+
+    auto function = _functions.find(value);
+
+    if(function ==_functions.end()) return{};
     QByteArray response = function.value()();
-    _bleServer->WriteCharacteristic(_char_response, response);
+    return response;
+}
+
+QByteArray BleApi::Execute(quint8 value)
+{
+    auto function =_bfunctions.find(value);
+
+    if(function ==_bfunctions.end()) return{};
+    QByteArray response = function.value()();
+    return response;
 }

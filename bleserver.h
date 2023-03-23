@@ -6,8 +6,6 @@
 #include <QLowEnergyServiceData>
 #include <qlowenergyadvertisingdata.h>
 
-
-
 class BleServer: public QObject
 {
     Q_OBJECT

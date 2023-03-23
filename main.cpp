@@ -60,6 +60,7 @@
 #include <QtBluetooth/qlowenergyservice.h>
 #include <QtBluetooth/qlowenergyservicedata.h>
 #include <QtCore/qbytearray.h>
+#include <QCommandLineParser>
 #ifndef Q_OS_ANDROID
 #include <QtCore/qcoreapplication.h>
 #else
@@ -70,6 +71,10 @@
 #include <QtCore/qscopedpointer.h>
 #include <QtCore/qtimer.h>
 #include "nameof.h"
+#include "helpers/stringify.h"
+#include "helpers/logger.h"
+#include "helpers/signalhelper.h"
+#include "helpers/commandlineparserhelper.h"
 
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
@@ -95,29 +100,72 @@
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
+    SignalHelper::setShutDownSignal(SignalHelper::SIGINT_); // shut down on ctrl-c
+    SignalHelper::setShutDownSignal(SignalHelper::SIGTERM_); // shut down on killall
 
-    QCoreApplication app(argc, argv);
+    Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
 
-    qDebug()<<"Start";
+#if defined (STRING) && defined (TARGI)
+    auto poj = STRING(TARGI);
+#else
+    auto poj=QStringLiteral("ApplicationNameString");
+#endif
 
     QString user = qgetenv("USER");
+    zInfo(QStringLiteral("started ")+poj+" as "+user);
 
-    qDebug()<<"USER:"<<user;
+    QCoreApplication app(argc, argv);
+    QCoreApplication::setApplicationName(poj);
+    QCoreApplication::setApplicationVersion("ApplicationVersionString");
+    QCoreApplication::setOrganizationName("OrganizationNameString");
+    QCoreApplication::setOrganizationDomain("OrganizationDomainString");
 
-    BleApi bleApi("TesztService1");
+    QCommandLineParser parser;
 
-    DoWork::init(&bleApi);
+    parser.setApplicationDescription(QStringLiteral("MesterCipő - MasterGaitInsole02"));
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    const QString OPTION_TEST = QStringLiteral("test");
+
+    CommandLineParserHelper::addOption(&parser, OPTION_TEST, QStringLiteral("command or command list to test"));
+
+    parser.process(app);
+
+    QString test = parser.value(OPTION_TEST);
+
+    BleApi bleApi("Teszt1");
+
+    DoWork::init({.bleApi = &bleApi, .test=test});
 
     bleApi.addrequest(DoWork::miki);
     bleApi.addrequest(DoWork::maki);
+//    bleApi.AddRequest("maki", DoWork::maki);
+//    bleApi.addrequest(DoWork::maki);
     bleApi.addrequest(DoWork::commands);
     bleApi.addrequest(DoWork::bommands);
     bleApi.addrequest(DoWork::lasterr);
+    bleApi.addrequest(DoWork::hwinfo);
+    bleApi.addrequest(DoWork::swinfo);
+    bleApi.addrequest(DoWork::buildnum);
 
     bleApi.AddRequest(0x17, DoWork::lasterr);
     bleApi.AddRequest(0x18, DoWork::commands);
     bleApi.AddRequest(0x19, DoWork::bommands);
-    bleApi.Start();
+
+    bleApi.AddRequest(0x51, DoWork::hwinfo);
+    bleApi.AddRequest(0x52, DoWork::swinfo);
+    bleApi.AddRequest(0x53, DoWork::buildnum);
+
+
+    if(DoWork::isTest())
+    {
+        zInfo("___TEST___")
+        DoWork::Test();
+        QCoreApplication::quit();
+    } else{
+        bleApi.Start();
+    }
 
     int e = app.exec();
     return e;

@@ -9,6 +9,7 @@ struct Status{
     QString lastError;
 
     QString ToString(){
+        if(lastStatus==0) return QStringLiteral("ok");
         return QString::number(lastStatus)+":"+lastError;
     }
 };
