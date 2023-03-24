@@ -2,6 +2,8 @@
 #include "global.h"
 #include "helpers/logger.h"
 #include "helpers/textfilehelper.h"
+#include "instance.h"
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QString>
@@ -92,17 +94,25 @@ QByteArray DoWork::hwinfo()
 
 QByteArray DoWork::swinfo()
 {
-    QString d = QCoreApplication::applicationName();
+    QString a = QCoreApplication::applicationName();
     QString b = QCoreApplication::applicationVersion();
 
-    auto a = (d+':'+b).toUtf8();
-    return a;
+    auto c = (a+':'+b).toUtf8();
+    return c;
 }
 
 QByteArray DoWork::instance()
 {
-    QByteArray a = QStringLiteral("instance").toUtf8();
+    QString a = QCoreApplication::applicationName();
+    QString b = Instance::ToString();
+
+    auto c = (a+':'+b).toUtf8();
+    return c;
+}
+
+QByteArray DoWork::datalength()
+{
+    QByteArray a = QStringLiteral("datalength").toUtf8();
 
     return a;
 }
-

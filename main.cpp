@@ -95,8 +95,6 @@
  * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /usr/bin/gdbserver
 */
 
-
-
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
@@ -168,7 +166,9 @@ int main(int argc, char *argv[])
     {
         zInfo("___TEST___")
         DoWork::Test();
-        QCoreApplication::quit();
+        zInfo("___END_TEST___")
+        //QCoreApplication::quit();
+        return 12;
     } else{
         bleApi.Start();
     }

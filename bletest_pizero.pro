@@ -19,8 +19,10 @@ SOURCES += \
         global.cpp \
         helpers/commandlineparserhelper.cpp \
         helpers/logger.cpp \
+        helpers/shortguid.cpp \
         helpers/signalhelper.cpp \
         helpers/textfilehelper.cpp \
+        instance.cpp \
         main.cpp
 
 HEADERS += \
@@ -31,9 +33,11 @@ HEADERS += \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/logger.h \
+    helpers/shortguid.h \
     helpers/signalhelper.h \
     helpers/stringify.h \
     helpers/textfilehelper.h \
+    instance.h \
     nameof.h
 
 contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
@@ -61,4 +65,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:rpi: target.path = /home/pi/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    buildnum.sh
 
