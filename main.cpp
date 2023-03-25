@@ -95,6 +95,13 @@
  * sshpass -p "qw" ssh pi@172.16.1.14 sudo setcap cap_net_admin,cap_net_raw+eip /usr/bin/gdbserver
 */
 
+/*
+Custom Process Step: buildnum_ -p Insole02 -t /home/zoli/bletest_pizero/buildnumber.h
+Command: ~/buildnum_
+Arguments: -p Insole02 -t %{sourceDir}/buildnumber.h
+Working directory: %{sourceDir}
+*/
+
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
