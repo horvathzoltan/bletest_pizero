@@ -1,5 +1,5 @@
 QT -= gui
-QT += bluetooth
+QT += bluetooth network
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
@@ -12,33 +12,37 @@ DEFINES += TARGI=$$TARGET
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        bleapi.cpp \
-        bleserver.cpp \
-        buildnumber.cpp \
-        dowork.cpp \
+        bi/ble/bleapi.cpp \
+        bi/ble/bleserver.cpp \
+        bi/buildnumber.cpp \
+        bi/dowork.cpp \
+        bi/instance.cpp \
+        bi/hwinfo.cpp \
         global.cpp \
-        helpers/commandlineparserhelper.cpp \
+        helpers/commandlineparserhelper.cpp \        
         helpers/logger.cpp \
+        helpers/networkhelper.cpp \
         helpers/shortguid.cpp \
         helpers/signalhelper.cpp \
         helpers/textfilehelper.cpp \
-        instance.cpp \
         main.cpp
 
 HEADERS += \
-    bleapi.h \
-    bleserver.h \
-    buildnumber.h \
-    dowork.h \
+    bi/ble/bleapi.h \
+    bi/ble/bleserver.h \
+    bi/buildnumber.h \
+    bi/dowork.h \
+    bi/instance.h \
+    bi/hwinfo.h \
     global.h \
-    helpers/commandlineparserhelper.h \
+    helpers/commandlineparserhelper.h \    
     helpers/logger.h \
+    helpers/nameof.h \
+    helpers/networkhelper.h \
     helpers/shortguid.h \
     helpers/signalhelper.h \
     helpers/stringify.h \
-    helpers/textfilehelper.h \
-    instance.h \
-    nameof.h
+    helpers/textfilehelper.h
 
 contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
     message(rpi detected)

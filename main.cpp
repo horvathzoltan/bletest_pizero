@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-#include "bleapi.h"
-#include "dowork.h"
+#include "bi/ble/bleapi.h"
+#include "bi/dowork.h"
 
 #include <QtBluetooth/qlowenergyadvertisingdata.h>
 #include <QtBluetooth/qlowenergyadvertisingparameters.h>
@@ -70,12 +70,13 @@
 #include <QtCore/qloggingcategory.h>
 #include <QtCore/qscopedpointer.h>
 #include <QtCore/qtimer.h>
-#include "nameof.h"
+
+#include "helpers/nameof.h"
 #include "helpers/stringify.h"
 #include "helpers/logger.h"
 #include "helpers/signalhelper.h"
 #include "helpers/commandlineparserhelper.h"
-#include "buildnumber.h"
+#include "bi/buildnumber.h"
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
  * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName(target);
-    QCoreApplication::setApplicationVersion(Buildnumber::toString());
+    QCoreApplication::setApplicationVersion(Buildnumber::_value);
     QCoreApplication::setOrganizationName("OrganizationNameString");
     QCoreApplication::setOrganizationDomain("OrganizationDomainString");
 

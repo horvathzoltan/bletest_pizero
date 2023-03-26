@@ -1,7 +1,7 @@
 #ifndef DOWORK_H
 #define DOWORK_H
 
-#include "bleapi.h"
+#include "ble/bleapi.h"
 
 #include <QByteArray>
 
