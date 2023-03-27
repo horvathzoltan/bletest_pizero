@@ -3,12 +3,13 @@
 
 #include <QVarLengthArray>
 
-# ifdef RPI
-# define BASE_0 100
-# define SPI_0 0
-# define BASE_1 140
-# define SPI_1 1
-# endif
+#ifdef RPI
+#define BASE_0 100
+#define SPI_0 0
+#define BASE_1 140
+#define SPI_1 1
+#define GPIO_BATT 27
+#endif
 
 // 3004 and 3008 are the same 4/8 channels
 # define MCP3004_CHANNELS 4
