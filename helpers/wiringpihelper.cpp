@@ -7,11 +7,12 @@
 # endif
 
 bool WiringPiHelper::_inited = false;
+bool WiringPiHelper::_verbose = false;
+int WiringPiHelper::_dataLength = 0;
 
 bool WiringPiHelper::Init()
 {
     _inited = false;
-
 # ifdef RPI
     wiringPiSetup();
     _inited = true;
@@ -23,16 +24,37 @@ bool WiringPiHelper::Init()
 }
 
 
-QVarLengthArray<int> WiringPiHelper::ReadMcp(QVarLengthArray<int> bases)
+bool WiringPiHelper::McpSetup(const QVarLengthArray<McpSetupModel>& models)
 {
-    if(!_inited) return {};
+    if(!WiringPiHelper::Inited()) return false;
+    if(models.isEmpty()) return false;
+#ifdef RPI
+    _dataLength=0;
+    for(auto&m:models){
+        mcp3004Setup(m.base, m.spi_chanel);
+        _dataLength+=m.chanels;
+    }
+    return true;
+#else
+    return false;
+#endif
 
-    QVarLengthArray<int> v(16);
-    for(auto&base:bases){
-        for(int i=0;i<8;i++){
-            int d = analogRead (base + i);
-            v[i] = d;
-            zInfo("d"+QString::number(i)+"="+QString::number(d));
+}
+
+// logger_2v0
+QVarLengthArray<int> WiringPiHelper::ReadMcp(const QVarLengthArray<McpSetupModel>& models)
+{
+
+    if(!_inited) return {};
+    if(models.isEmpty()) return {};
+
+    QVarLengthArray<int> v(_dataLength);
+    int j=0;
+    for(auto&m:models){
+        for(int i=0;i<m.chanels;i++){
+            v[j] = analogRead(m.base + i);
+            if(_verbose)zInfo("d["+QString::number(j)+"]="+QString::number(v[j]));
+            j++;
         }
     }
     return v;

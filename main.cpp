@@ -79,6 +79,8 @@
 #include "helpers/wiringpihelper.h"
 
 #include "bi/buildnumber.h"
+#include "bi/mcpreader.h"
+
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
  * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
@@ -113,6 +115,7 @@ int main(int argc, char *argv[])
 
     Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
     WiringPiHelper::Init();
+    McpReader::Init(QStringLiteral("logger_2v0"));
 
 #if defined (STRING) && defined (TARGI)
     auto target = STRING(TARGI);

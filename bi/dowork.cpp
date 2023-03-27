@@ -133,20 +133,20 @@ QByteArray DoWork::instance()
 
 QByteArray DoWork::datalength()
 {
-    QByteArray a = QStringLiteral("datalength").toUtf8();
+    QByteArray a = QString::number(WiringPiHelper::DataLength()).toUtf8();
 
     return a;
 }
 
 QByteArray DoWork::data()
 {
-    QVarLengthArray<quint16> values = McpReader::GetValues();
+    auto values = McpReader::GetValues();
 
     QString e;
-//    for(auto&v:values){
-//        if(!e.isEmpty())e+=',';
-//        e+=QString::number(v);
-//    }
+    for(auto&v:values){
+        if(!e.isEmpty())e+=';';
+        e+=QString::number(v);
+    }
     zInfo("data:"+e);
     QByteArray a=e.toUtf8();
     return a;
