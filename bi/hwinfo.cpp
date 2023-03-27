@@ -6,6 +6,7 @@
 
 const QString HwInfo::_value = GetValue();
 HwInfo::Model HwInfo::_model;
+
 bool HwInfo::_inited= false;
 QString HwInfo::_lastError;
 
@@ -19,6 +20,7 @@ QString HwInfo::GetValue(){
 
 bool HwInfo::Init(){
     _inited=false;
+    _model = {};
     auto hwinfoFn = FileNameHelper::HwInfFileName();
     QStringList lines; // fájltartalom
     bool ok = TextFileHelper::LoadLines(hwinfoFn, &lines);

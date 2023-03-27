@@ -114,39 +114,39 @@ extern Status status;
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-
-    QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
-    SignalHelper::setShutDownSignal(SignalHelper::SIGINT_); // shut down on ctrl-c
-    SignalHelper::setShutDownSignal(SignalHelper::SIGTERM_); // shut down on killall
-
-    Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
-
-    FileNameHelper::Init(QCoreApplication::applicationDirPath());
-    bool hwinfo_ok = HwInfo::Init();
-    if(!hwinfo_ok){
-        status.set(Status::Err, HwInfo::LastError());
-        zInfo(status.ToString());
-        return 1;
-    }
-    QString hwType = HwInfo::HwType();
-    WiringPiHelper::Init();
-    McpReader::Init(hwType);
-
 #if defined (STRING) && defined (TARGI)
     auto target = STRING(TARGI);
 #else
     auto target=QStringLiteral("ApplicationNameString");
 #endif
 
-    QString user = qgetenv("USER");
-    zInfo(QStringLiteral("started ")+target+" as "+user);
-
-
+    QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName(target);
     QCoreApplication::setApplicationVersion(Buildnumber::_value);
     QCoreApplication::setOrganizationName("OrganizationNameString");
     QCoreApplication::setOrganizationDomain("OrganizationDomainString");
+
+    QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
+    SignalHelper::setShutDownSignal(SignalHelper::SIGINT_); // shut down on ctrl-c
+    SignalHelper::setShutDownSignal(SignalHelper::SIGTERM_); // shut down on killall
+
+    Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
+    QString user = qgetenv("USER");
+    zInfo(QStringLiteral("started ")+target+" as "+user);
+    FileNameHelper::Init(QCoreApplication::applicationDirPath());
+    WiringPiHelper::Init();
+
+    // ha először indul, ez még nem az aktuális, és nem lesz felinitelve
+    // a tesztprogram fogja a megfelelő rekordot bele felscpzni
+    bool hwinfo_ok = HwInfo::Init();
+    if(hwinfo_ok){
+        QString hwType = HwInfo::HwType();
+        McpReader::Init(hwType);
+    } else{
+        status.set(Status::Err, HwInfo::LastError());
+        zInfo("hwinfo:"+status.ToString());
+        return 1;
+    }
 
     QCommandLineParser parser;
 

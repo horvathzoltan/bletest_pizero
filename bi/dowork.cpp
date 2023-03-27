@@ -76,16 +76,14 @@ void DoWork::Test()
     }
 }
 
-/**/
+// hwinfo_b827eb96cabf.csv
+// b8:27:eb:96:ca:bf;1010;logger_2v0
+// /home/pi/bletest_pizero/bin/hwinfo.csv
+// scp hwinfo_b827eb96cabf.csv pi@10.10.10.102:bletest_pizero/bin/hwinfo.csv
+// "B8:27:EB:E3:CC:41"
+
 QByteArray DoWork::hwinfo()
 {    
-//    auto appdir = QCoreApplication::applicationDirPath();
-    // hwinfo_b827eb96cabf.csv
-    // b8:27:eb:96:ca:bf;1010;logger_2v0
-    // /home/pi/bletest_pizero/bin/hwinfo.csv
-    // scp hwinfo_b827eb96cabf.csv pi@10.10.10.102:bletest_pizero/bin/hwinfo.csv
-    // "B8:27:EB:E3:CC:41"
-    //auto hwinfoFn = QDir(appdir).filePath("hwinfo.csv");
     auto a = HwInfo::Value().toUtf8();
     return a;
 }
