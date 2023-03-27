@@ -21,6 +21,7 @@ SOURCES += \
         bi/mcpreader.cpp \
         global.cpp \
         helpers/commandlineparserhelper.cpp \
+        helpers/filenamehelper.cpp \
         helpers/wiringpihelper.cpp \
         helpers/logger.cpp \
         helpers/networkhelper.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     bi/mcpreader.h \
     global.h \
     helpers/commandlineparserhelper.h \
+    helpers/filenamehelper.h \
     helpers/wiringpihelper.h \
     helpers/logger.h \
     helpers/nameof.h \

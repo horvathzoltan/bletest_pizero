@@ -80,7 +80,9 @@
 
 #include "bi/buildnumber.h"
 #include "bi/mcpreader.h"
-
+#include "helpers/filenamehelper.h"
+#include "bi/hwinfo.h"
+#include "global.h"
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
  * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
@@ -107,15 +109,29 @@ Arguments: -p Insole02 -t %{sourceDir}/bi/buildnumber.h
 Working directory: %{sourceDir}
 */
 
+// -t commands,swinfo,instance,hwinfo,datalength,data
+extern Status status;
+
 int main(int argc, char *argv[])
 {
+    QCoreApplication app(argc, argv);
+
     QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
     SignalHelper::setShutDownSignal(SignalHelper::SIGINT_); // shut down on ctrl-c
     SignalHelper::setShutDownSignal(SignalHelper::SIGTERM_); // shut down on killall
 
     Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
+
+    FileNameHelper::Init(QCoreApplication::applicationDirPath());
+    bool hwinfo_ok = HwInfo::Init();
+    if(!hwinfo_ok){
+        status.set(Status::Err, HwInfo::LastError());
+        zInfo(status.ToString());
+        return 1;
+    }
+    QString hwType = HwInfo::HwType();
     WiringPiHelper::Init();
-    McpReader::Init(QStringLiteral("logger_2v0"));
+    McpReader::Init(hwType);
 
 #if defined (STRING) && defined (TARGI)
     auto target = STRING(TARGI);
@@ -126,7 +142,7 @@ int main(int argc, char *argv[])
     QString user = qgetenv("USER");
     zInfo(QStringLiteral("started ")+target+" as "+user);
 
-    QCoreApplication app(argc, argv);
+
     QCoreApplication::setApplicationName(target);
     QCoreApplication::setApplicationVersion(Buildnumber::_value);
     QCoreApplication::setOrganizationName("OrganizationNameString");
