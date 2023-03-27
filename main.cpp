@@ -76,6 +76,8 @@
 #include "helpers/logger.h"
 #include "helpers/signalhelper.h"
 #include "helpers/commandlineparserhelper.h"
+#include "helpers/wiringpihelper.h"
+
 #include "bi/buildnumber.h"
 /*
  * edit/preferences/debugger/gdb/Additional Startup Program
@@ -99,7 +101,7 @@
 /*
 Custom Process Step: buildnum_ -p Insole02 -t /home/zoli/bletest_pizero/buildnumber.h
 Command: ~/buildnum_
-Arguments: -p Insole02 -t %{sourceDir}/buildnumber.h
+Arguments: -p Insole02 -t %{sourceDir}/bi/buildnumber.h
 Working directory: %{sourceDir}
 */
 
@@ -110,6 +112,7 @@ int main(int argc, char *argv[])
     SignalHelper::setShutDownSignal(SignalHelper::SIGTERM_); // shut down on killall
 
     Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
+    WiringPiHelper::Init();
 
 #if defined (STRING) && defined (TARGI)
     auto target = STRING(TARGI);
@@ -153,6 +156,7 @@ int main(int argc, char *argv[])
     bleApi.addrequest(DoWork::commands);
     bleApi.addrequest(DoWork::bommands);
 
+    bleApi.addrequest(DoWork::data);
     bleApi.addrequest(DoWork::datalength);
 
     bleApi.addrequest(DoWork::hwinfo);
@@ -164,6 +168,7 @@ int main(int argc, char *argv[])
     bleApi.AddRequest(0x18, DoWork::commands);
     bleApi.AddRequest(0x19, DoWork::bommands);
 
+    bleApi.AddRequest(0x37, DoWork::data);
     bleApi.AddRequest(0x40, DoWork::datalength);
 
     bleApi.AddRequest(0x51, DoWork::hwinfo);

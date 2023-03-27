@@ -4,6 +4,7 @@
 #include "helpers/textfilehelper.h"
 #include "instance.h"
 #include "bi/hwinfo.h"
+#include "bi/mcpreader.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -134,5 +135,19 @@ QByteArray DoWork::datalength()
 {
     QByteArray a = QStringLiteral("datalength").toUtf8();
 
+    return a;
+}
+
+QByteArray DoWork::data()
+{
+    QVarLengthArray<quint16> values = McpReader::GetValues();
+
+    QString e;
+//    for(auto&v:values){
+//        if(!e.isEmpty())e+=',';
+//        e+=QString::number(v);
+//    }
+    zInfo("data:"+e);
+    QByteArray a=e.toUtf8();
     return a;
 }
