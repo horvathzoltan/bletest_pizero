@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName(target);
     QCoreApplication::setApplicationVersion(Buildnumber::_value);
-    QCoreApplication::setOrganizationName("OrganizationNameString");
-    QCoreApplication::setOrganizationDomain("OrganizationDomainString");
+    QCoreApplication::setOrganizationName("LogControl Kft.");
+    QCoreApplication::setOrganizationDomain("https://www.logcontrol.hu/");
 
     QLoggingCategory::setFilterRules("qt.bluetooth.bluez.debug=true\n" "qt.bluetooth.debug=true");
     SignalHelper::setShutDownSignal(SignalHelper::SIGINT_); // shut down on ctrl-c
@@ -177,6 +177,7 @@ int main(int argc, char *argv[])
 
     bleApi.addrequest(DoWork::data);
     bleApi.addrequest(DoWork::datalength);
+    bleApi.addrequest(DoWork::battery);
 
     bleApi.addrequest(DoWork::hwinfo);
     bleApi.addrequest(DoWork::swinfo);
@@ -189,6 +190,7 @@ int main(int argc, char *argv[])
 
     bleApi.AddRequest(0x37, DoWork::data);
     bleApi.AddRequest(0x40, DoWork::datalength);
+    bleApi.AddRequest(0x54, DoWork::battery);
 
     bleApi.AddRequest(0x51, DoWork::hwinfo);
     bleApi.AddRequest(0x52, DoWork::swinfo);

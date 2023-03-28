@@ -41,10 +41,9 @@ bool WiringPiHelper::McpSetup(const QVarLengthArray<McpSetupModel>& models)
 
 }
 
-// logger_2v0
+//http://wiringpi.com/reference/core-functions/
 QVarLengthArray<int> WiringPiHelper::ReadMcp(const QVarLengthArray<McpSetupModel>& models)
 {
-
     if(!_inited) return {};
     if(models.isEmpty()) return {};
 
@@ -58,4 +57,14 @@ QVarLengthArray<int> WiringPiHelper::ReadMcp(const QVarLengthArray<McpSetupModel
         }
     }
     return v;
+}
+
+
+bool WiringPiHelper::ReadBattery(){
+
+    #ifdef RPI
+        return digitalRead(GPIO_BATT);
+    #else
+        return -1;
+    #endif
 }

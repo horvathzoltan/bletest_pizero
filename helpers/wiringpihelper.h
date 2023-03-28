@@ -36,6 +36,7 @@ public:
     static bool McpSetup(const QVarLengthArray<McpSetupModel>& model);
 
     static QVarLengthArray<int> ReadMcp(const QVarLengthArray<McpSetupModel>& models);
+    static bool ReadBattery();
 };
 
 #endif // WIRINGPIHELPER_H

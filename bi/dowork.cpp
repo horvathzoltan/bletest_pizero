@@ -109,7 +109,12 @@ QByteArray DoWork::instance()
 QByteArray DoWork::datalength()
 {
     QByteArray a = QString::number(WiringPiHelper::DataLength()).toUtf8();
+    return a;
+}
 
+QByteArray DoWork::battery()
+{
+    QByteArray a = QString::number(WiringPiHelper::ReadBattery()).toUtf8();
     return a;
 }
 

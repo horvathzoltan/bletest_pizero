@@ -24,15 +24,16 @@ public:
     static QByteArray maki();
     static QByteArray miki();
 
-    static QByteArray commands(); //0x18
-    static QByteArray bommands(); //0x19
-    static QByteArray lasterr(); //0x17
-    static QByteArray hwinfo(); //0x51
-    static QByteArray swinfo(); //0x52    
-    static QByteArray instance(); //0x53
+    static QByteArray commands();
+    static QByteArray bommands();
+    static QByteArray lasterr();
+    static QByteArray hwinfo();
+    static QByteArray swinfo();
+    static QByteArray instance();
 
-    static QByteArray datalength(); //0x40
-    static QByteArray data(); //0x37
+    static QByteArray datalength();
+    static QByteArray data();
+    static QByteArray battery();
 
     // beállítások, kulcs-érték pár mentése
     //static bool settings1(const QByteArray& data);
