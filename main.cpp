@@ -83,7 +83,10 @@
 #include "helpers/filenamehelper.h"
 #include "bi/hwinfo.h"
 #include "global.h"
+#include "bi/instance.h"
+
 /*
+ *
  * edit/preferences/debugger/gdb/Additional Startup Program
  * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
  *
@@ -148,6 +151,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    zInfo("instance:"+Instance::_value);
+
     QCommandLineParser parser;
 
     parser.setApplicationDescription(QStringLiteral("MesterCipő - MasterGaitInsole02"));
@@ -181,7 +186,7 @@ int main(int argc, char *argv[])
 
     bleApi.addrequest(DoWork::hwinfo);
     bleApi.addrequest(DoWork::swinfo);
-    bleApi.addrequest(DoWork::instance);
+    //bleApi.addrequest(DoWork::instance);
 
     bleApi.addrequest(DoWork::update);
     bleApi.addrequest(DoWork::restart);
@@ -199,13 +204,12 @@ int main(int argc, char *argv[])
 
     bleApi.AddRequest(0x51, DoWork::hwinfo);
     bleApi.AddRequest(0x52, DoWork::swinfo);
-    bleApi.AddRequest(0x53, DoWork::instance);
+    //bleApi.AddRequest(0x53, DoWork::instance);
 
     bleApi.AddRequest(0x54, DoWork::update);
     bleApi.AddRequest(0x55, DoWork::restart);
 
     bleApi.AddRequest(0x56, DoWork::getip);
-    //bleApi.AddRequest(0x53, DoWork::instance);
 
     if(DoWork::isTest())
     {

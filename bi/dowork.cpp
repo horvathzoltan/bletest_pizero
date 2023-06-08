@@ -92,19 +92,20 @@ QByteArray DoWork::swinfo()
 {
     QString a = QCoreApplication::applicationName();
     QString b = QCoreApplication::applicationVersion();
+    QString i = Instance::_value;
 
-    auto c = (a+':'+b).toUtf8();
+    auto c = (a+':'+b+':'+i).toUtf8();
     return c;
 }
 
-QByteArray DoWork::instance()
-{
-    QString a = QCoreApplication::applicationName();
-    QString b = Instance::_value;
+//QByteArray DoWork::instance()
+//{
+//    QString a = QCoreApplication::applicationName();
+//    QString b = Instance::_value;
 
-    auto c = (a+':'+b).toUtf8();
-    return c;
-}
+//    auto c = (a+':'+b).toUtf8();
+//    return c;
+//}
 
 QByteArray DoWork::datalength()
 {
@@ -156,9 +157,10 @@ QByteArray DoWork::getip()
     auto hostaddresses = NetworkHelper::GetLocalAddresses();
 
     QString e;
-    for(auto& a: hostaddresses){
+    for (QHostAddress &a : hostaddresses) {
         if(!e.isEmpty()) e+=':';
-        e.append(a.toString());
+
+        e+=a.toString();
     }
     QByteArray a = e.toUtf8();
     return a;

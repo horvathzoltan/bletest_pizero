@@ -29,7 +29,7 @@ public:
     static QByteArray lasterr();
     static QByteArray hwinfo();
     static QByteArray swinfo();
-    static QByteArray instance();
+    //static QByteArray instance();
 
     static QByteArray datalength();
     static QByteArray data();
