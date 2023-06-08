@@ -183,6 +183,11 @@ int main(int argc, char *argv[])
     bleApi.addrequest(DoWork::swinfo);
     bleApi.addrequest(DoWork::instance);
 
+    bleApi.addrequest(DoWork::update);
+    bleApi.addrequest(DoWork::restart);
+
+    bleApi.addrequest(DoWork::getip);
+
 // rövidített commandok
     bleApi.AddRequest(0x17, DoWork::lasterr);
     bleApi.AddRequest(0x18, DoWork::commands);
@@ -195,6 +200,12 @@ int main(int argc, char *argv[])
     bleApi.AddRequest(0x51, DoWork::hwinfo);
     bleApi.AddRequest(0x52, DoWork::swinfo);
     bleApi.AddRequest(0x53, DoWork::instance);
+
+    bleApi.AddRequest(0x54, DoWork::update);
+    bleApi.AddRequest(0x55, DoWork::restart);
+
+    bleApi.AddRequest(0x56, DoWork::getip);
+    //bleApi.AddRequest(0x53, DoWork::instance);
 
     if(DoWork::isTest())
     {

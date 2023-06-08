@@ -34,7 +34,10 @@ public:
     static QByteArray datalength();
     static QByteArray data();
     static QByteArray battery();
+    static QByteArray update();
+    static QByteArray restart();
 
+    static QByteArray getip();
     // beállítások, kulcs-érték pár mentése
     //static bool settings1(const QByteArray& data);
     static void Test();

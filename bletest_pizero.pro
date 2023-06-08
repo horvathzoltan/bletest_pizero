@@ -19,6 +19,7 @@ SOURCES += \
         bi/instance.cpp \
         bi/hwinfo.cpp \
         bi/mcpreader.cpp \
+        bi/updater.cpp \
         global.cpp \
         helpers/commandlineparserhelper.cpp \
         helpers/filenamehelper.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
         helpers/shortguid.cpp \
         helpers/signalhelper.cpp \
         helpers/textfilehelper.cpp \
+        helpers/processhelper.cpp \
         main.cpp
 
 HEADERS += \
@@ -38,6 +40,7 @@ HEADERS += \
     bi/instance.h \
     bi/hwinfo.h \
     bi/mcpreader.h \
+    bi/updater.h \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/filenamehelper.h \
@@ -48,7 +51,8 @@ HEADERS += \
     helpers/shortguid.h \
     helpers/signalhelper.h \
     helpers/stringify.h \
-    helpers/textfilehelper.h
+    helpers/textfilehelper.h \
+    helpers/processhelper.h
 
 DISTFILES +=
 
