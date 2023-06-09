@@ -144,6 +144,15 @@ QByteArray DoWork::update()
     return a;
 }
 
+QByteArray DoWork::checkupdate()
+{
+    QString b = QCoreApplication::applicationVersion();
+    QString buildnum;
+    bool ok = Updater::CheckUpdate(b, &buildnum);
+    QByteArray a = (ok?buildnum:QStringLiteral("ERR")).toUtf8();
+    return a;
+}
+
 QByteArray DoWork::restart()
 {
     QCoreApplication::exit(55);
