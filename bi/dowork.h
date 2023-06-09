@@ -35,7 +35,10 @@ public:
     static QByteArray data();
     static QByteArray battery();
     static QByteArray update();
+    static QByteArray updateasync();
+
     static QByteArray checkupdate();
+    static QByteArray updatestatus();
     static QByteArray restart();
 
     static QByteArray getip();

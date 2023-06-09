@@ -144,12 +144,27 @@ QByteArray DoWork::update()
     return a;
 }
 
+QByteArray DoWork::updateasync()
+{
+    QString b = QCoreApplication::applicationVersion();
+    bool ok = Updater::UpdateAsync(b);
+    QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
+    return a;
+}
+
 QByteArray DoWork::checkupdate()
 {
     QString b = QCoreApplication::applicationVersion();
     QString buildnum;
     bool ok = Updater::CheckUpdate(b, &buildnum);
     QByteArray a = (ok?buildnum:QStringLiteral("ERR")).toUtf8();
+    return a;
+}
+
+QByteArray DoWork::updatestatus()
+{
+    QString status = Updater::GetStatus();
+    QByteArray a = status.toUtf8();
     return a;
 }
 
