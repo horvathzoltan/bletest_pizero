@@ -60,19 +60,41 @@ QStringList BleApi::BRequests() {
         } else{
             //qDebug()<<"nincs byte a commandhoz:"+fk;
         }
-
     }
 
     return b;
 }
 
-void BleApi::Changed(QBluetoothUuid uuid, const QString& value)
+
+/// 012345 L=6
+/// abv|de
+/// ix = 3
+/// L = 6
+///
+void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
 {
-    if(uuid != _char_request) return;    
+    const QChar SEP('|');
+    if(uuid != _char_request) return;
+    if(keyValue.isEmpty()) return;
+
     //if(value.isEmpty()) return;
+    int ix = keyValue.lastIndexOf(SEP);
+    QString key, value;
+    if(ix>0){
+        key = keyValue.left(ix);
+        value = keyValue.right(keyValue.length()-ix-1);
+    } else{
+        key = QString();
+        value = keyValue;
+    }
+
     auto r = Execute(value);
+
+    if(!key.isEmpty()) r.append((SEP+key).toUtf8());
+
     _bleServer->WriteCharacteristic(_char_response, r);
 }
+
 
 QByteArray BleApi::Execute(const QString& value)
 {
