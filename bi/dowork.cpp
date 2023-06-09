@@ -1,11 +1,11 @@
 #include "dowork.h"
 #include "global.h"
 #include "helpers/logger.h"
-#include "helpers/textfilehelper.h"
+#include "helpers/networkhelper.h"
 #include "instance.h"
 #include "bi/hwinfo.h"
 #include "bi/mcpreader.h"
-
+#include "bi/updater.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QString>
@@ -92,19 +92,20 @@ QByteArray DoWork::swinfo()
 {
     QString a = QCoreApplication::applicationName();
     QString b = QCoreApplication::applicationVersion();
+    QString i = Instance::_value;
 
-    auto c = (a+':'+b).toUtf8();
+    auto c = (a+':'+b+':'+i).toUtf8();
     return c;
 }
 
-QByteArray DoWork::instance()
-{
-    QString a = QCoreApplication::applicationName();
-    QString b = Instance::_value;
+//QByteArray DoWork::instance()
+//{
+//    QString a = QCoreApplication::applicationName();
+//    QString b = Instance::_value;
 
-    auto c = (a+':'+b).toUtf8();
-    return c;
-}
+//    auto c = (a+':'+b).toUtf8();
+//    return c;
+//}
 
 QByteArray DoWork::datalength()
 {
@@ -130,3 +131,38 @@ QByteArray DoWork::data()
     QByteArray a=e.toUtf8();
     return a;
 }
+
+// elvileg az updaternek nem kellene újraindítania semmit, hanem
+// ha a run-ig ok volt minden kellene egy exit55 hívás
+// annak kellene a programból kilépnie exit 55-el - az unit újraindul magától
+
+QByteArray DoWork::update()
+{
+    QString b = QCoreApplication::applicationVersion();
+    bool ok = Updater::Update(b);
+    QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
+    return a;
+}
+
+QByteArray DoWork::restart()
+{
+    QCoreApplication::exit(55);
+    return QStringLiteral("Ok").toUtf8();
+}
+
+// ip címek megszerzése - wlan0, eth0
+
+QByteArray DoWork::getip()
+{
+    auto hostaddresses = NetworkHelper::GetLocalAddresses();
+
+    QString e;
+    for (QHostAddress &a : hostaddresses) {
+        if(!e.isEmpty()) e+=':';
+
+        e+=a.toString();
+    }
+    QByteArray a = e.toUtf8();
+    return a;
+}
+

@@ -35,3 +35,20 @@ QString NetworkHelper::hwip(const QString& hwid){
     return QString();
 }
 
+QList<QHostAddress> NetworkHelper::GetLocalAddresses()
+{
+    QList<QHostAddress> result;
+    QList<QNetworkInterface> allInterfaces = QNetworkInterface::allInterfaces();
+
+    for(auto&eth:allInterfaces) {
+        QList<QNetworkAddressEntry> allEntries = eth.addressEntries();
+        for(auto&entry:allEntries) {
+            auto ip = entry.ip();
+            if (ip.protocol() != QAbstractSocket::IPv4Protocol) continue;
+            if(ip == QHostAddress(QHostAddress::LocalHost)) continue;
+            if(entry.netmask().isNull()) continue;
+            result.append(ip);
+        }
+    }
+    return result;
+}
