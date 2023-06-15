@@ -1,6 +1,7 @@
 #include "bleserver.h"
 
 #include <QLowEnergyAdvertisingParameters>
+#include <QLowEnergyConnectionParameters>
 #include <QLowEnergyDescriptorData>
 
 BleServer::BleServer(QUuid serviceUuid,
@@ -49,31 +50,50 @@ void BleServer::Changed(const QLowEnergyCharacteristic &characteristic,
     emit CharacteristicChanged(characteristic.uuid(), QString(newValue));
 }
 
+void BleServer::Written(const QLowEnergyCharacteristic &characteristic,
+                        const QByteArray &newValue)
+{
+    Q_UNUSED(characteristic)
+    Q_UNUSED(newValue)
+
+    //_isWritten = true;
+}
+
 void BleServer::Connect()
 {
     _service.reset(_controller->addService(_serviceData));
     if (!_service.isNull()){
-        QObject::connect(_service.get(),
-                         &QLowEnergyService::characteristicChanged,
-                         this,
-                         &BleServer::Changed);
+        QLowEnergyService *s = _service.get();
 
-        qDebug()<<"StartAdvertising";
+        QObject::connect(s, &QLowEnergyService::characteristicChanged, this,
+                         &BleServer::Changed);
+//        QObject::connect(s, &QLowEnergyService::characteristicWritten, this,
+//                         &BleServer::Written);
+
+        qDebug() << "StartAdvertising";
+        if (_controller->AdvertisingState)
         _controller->startAdvertising(QLowEnergyAdvertisingParameters(), _advertisingData, _advertisingData);
     }
 }
 
 void BleServer::StartAdvertising()
 {
-    _controller.reset(QLowEnergyController::createPeripheral());
+    _controller.reset(QLowEnergyController::createPeripheral());// itt kap értéket a _controller
+
+    //QLowEnergyConnectionParameters connP;
+    //connP.setIntervalRange(32.5, 32.5);
+    //connP.setIntervalRange(16.25, 16.25);
+    //_controller->requestConnectionUpdate(connP);
+
     Connect();
     auto reconnect = [this](){Connect();};
     QObject::connect(_controller.data(), &QLowEnergyController::disconnected, reconnect);
 }
 
 void BleServer::WriteCharacteristic(QUuid characteristicUuid, const QByteArray &value)
-{
+{    
     if(!_service) return;
+    //_isWritten = false;
     QLowEnergyCharacteristic characteristic
             = _service->characteristic(characteristicUuid);
     Q_ASSERT(characteristic.isValid());

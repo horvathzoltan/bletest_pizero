@@ -33,6 +33,7 @@ public:
 
     static QByteArray datalength();
     static QByteArray data();
+    static QByteArray data10();
     static QByteArray battery();
     static QByteArray update();
     static QByteArray checkupdate();

@@ -132,6 +132,11 @@ QByteArray DoWork::data()
     return a;
 }
 
+QByteArray DoWork::data10()
+{
+    return data();
+}
+
 // elvileg az updaternek nem kellene újraindítania semmit, hanem
 // ha a run-ig ok volt minden kellene egy exit55 hívás
 // annak kellene a programból kilépnie exit 55-el - az unit újraindul magától

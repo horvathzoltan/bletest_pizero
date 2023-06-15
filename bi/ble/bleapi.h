@@ -5,6 +5,8 @@
 
 #include <QMap>
 #include <QString>
+#include <QAtomicInt>
+
 
 #define addrequest(x) AddRequest(nameof_fn(x), x)
 
@@ -21,6 +23,8 @@ private:
 
     static QUuid _serviceUuid,_char_response,_char_request;//_char2
     QByteArray Execute(quint8 value);
+
+    static QAtomicInt _majom;
 
 public:    
     BleApi(const QString& name);

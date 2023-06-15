@@ -1,8 +1,11 @@
 #include "bleapi.h"
+#include <QThread>
 
 QUuid BleApi::_serviceUuid("00001234-0000-1000-8000-00805F9B34FB");
 QUuid BleApi::_char_response("00001235-0000-1000-8000-00805F9B34FB");
 QUuid BleApi::_char_request("00001237-0000-1000-8000-00805F9B34FB");
+
+QAtomicInt BleApi::_majom;
 
 BleApi::BleApi(const QString& name)
 {        
@@ -88,11 +91,56 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
         value = keyValue;
     }
 
-    auto r = Execute(value);
+    if(value == "data10")
+    {
+        auto tokens = key.split(':');
+        int respCount = 1;
+        int respTime = 50;
+        if(tokens.length()>1){
+            bool ok;
+            int r1 = tokens[1].toInt(&ok);
+            if(ok) respCount = r1;
+        }
+        if(tokens.length()>2){
+            bool ok;
+            int r1 = tokens[2].toInt(&ok);
+            if(ok) respTime = r1;
+        }
 
-    if(!key.isEmpty()) r.append((SEP+key).toUtf8());
+        bool ok = _majom.testAndSetOrdered(0, respCount);
+        _majom.storeRelease(respCount);
+        if(!ok) return;
 
-    _bleServer->WriteCharacteristic(_char_response, r);
+        // command = "id:7|data10" // 7szer ismételünk
+
+        forever
+        {
+            int i = _majom--;
+            if(i <= 0)
+                break;
+
+            auto r = Execute(value);
+
+            if(!key.isEmpty()) r.append((SEP+tokens[0]+':'+QString::number(i)).toUtf8());
+
+            _bleServer->WriteCharacteristic(_char_response, r);
+
+            //while(!_bleServer->IsWritten())
+            //{
+                QThread::msleep(respTime);
+            //}
+        }
+
+        _majom.storeRelease(0);
+    }
+    else
+    {
+        auto r = Execute(value);
+
+        if(!key.isEmpty()) r.append((SEP+key).toUtf8());
+
+        _bleServer->WriteCharacteristic(_char_response, r);
+    }
 }
 
 
