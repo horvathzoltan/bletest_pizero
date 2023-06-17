@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 
     QString test = parser.value(OPTION_TEST);
 
-    QString bleApi_Name = "Teszt1";
+    QString bleApi_Name = "MasterGait";
     if(hwinfo_ok) bleApi_Name+=':'+HwInfo::Serial();
     BleApi bleApi(bleApi_Name);
 

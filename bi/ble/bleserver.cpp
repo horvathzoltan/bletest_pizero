@@ -47,6 +47,9 @@ void BleServer::AddCharacteristic(
 void BleServer::Changed(const QLowEnergyCharacteristic &characteristic,
              const QByteArray &newValue)
 {
+    //QLowEnergyCharacteristic::PropertyTypes props = characteristic.properties();
+    //bool isIndicate = props.testFlag(QLowEnergyCharacteristic::Indicate);
+    //_isWritten = true;
     emit CharacteristicChanged(characteristic.uuid(), QString(newValue));
 }
 
@@ -67,7 +70,7 @@ void BleServer::Connect()
 
         QObject::connect(s, &QLowEnergyService::characteristicChanged, this,
                          &BleServer::Changed);
-//        QObject::connect(s, &QLowEnergyService::characteristicWritten, this,
+//        QObject::connect(s, &QLowEnergyService::cha, this,
 //                         &BleServer::Written);
 
         qDebug() << "StartAdvertising";
@@ -79,6 +82,7 @@ void BleServer::Connect()
 void BleServer::StartAdvertising()
 {
     _controller.reset(QLowEnergyController::createPeripheral());// itt kap értéket a _controller
+    //_controller.reset(QLowEnergyController::createCentral());// itt kap értéket a _controller
 
     //QLowEnergyConnectionParameters connP;
     //connP.setIntervalRange(32.5, 32.5);

@@ -12,7 +12,7 @@ BleApi::BleApi(const QString& name)
     _bleServer = new BleServer(_serviceUuid, name);
 
     _bleServer->AddCharacteristic(_char_response, QByteArray(2, 0), QLowEnergyCharacteristic::Notify);
-    _bleServer->AddCharacteristic(_char_request, QByteArray(2, 0), QLowEnergyCharacteristic::Write);
+    _bleServer->AddCharacteristic(_char_request, QByteArray(2, 0), QLowEnergyCharacteristic::WriteNoResponse);
 
     QObject::connect(_bleServer,
                      &BleServer::CharacteristicChanged,
@@ -126,9 +126,9 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
             _bleServer->WriteCharacteristic(_char_response, r);
 
             //while(!_bleServer->IsWritten())
-            //{
+            {
                 QThread::msleep(respTime);
-            //}
+            }
         }
 
         _majom.storeRelease(0);
