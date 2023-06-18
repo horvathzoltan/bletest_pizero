@@ -106,7 +106,6 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
             int r1 = tokens[2].toInt(&ok);
             if(ok) respTime = r1;
         }
-
         bool ok = _majom.testAndSetOrdered(0, respCount);
         _majom.storeRelease(respCount);
         if(!ok) return;
@@ -122,7 +121,11 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
             auto r = Execute(value);
 
             if(!key.isEmpty()) r.append((SEP+tokens[0]+':'+QString::number(i)).toUtf8());
+            //bool ok;
+            //uint reqkey = tokens[0].toUInt(&ok);
+            //bool kimarad = ok && (reqkey%3==1 || reqkey%3==2);
 
+            //if(!kimarad)
             _bleServer->WriteCharacteristic(_char_response, r);
 
             //while(!_bleServer->IsWritten())
