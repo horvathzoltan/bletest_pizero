@@ -1,7 +1,7 @@
 #ifndef BUILDNUMBER_H
 #define BUILDNUMBER_H
 
-#define BUILDNUMBER 1140
+#define BUILDNUMBER 1144
 
 #include <QString>
 

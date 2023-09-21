@@ -24,22 +24,26 @@ public:
     static QByteArray maki();
     static QByteArray miki();
 
-    static QByteArray commands();
-    static QByteArray bommands();
-    static QByteArray lasterr();
-    static QByteArray hwinfo();
-    static QByteArray swinfo();
+    static QByteArray commands(const QString& data);
+    static QByteArray bommands(const QString& data);
+    static QByteArray lasterr(const QString& data);
+    static QByteArray hwinfo(const QString& data);
+    static QByteArray swinfo(const QString& data);
     //static QByteArray instance();
 
-    static QByteArray datalength();
-    static QByteArray data();
-    static QByteArray data10();
-    static QByteArray battery();
-    static QByteArray update();
-    static QByteArray checkupdate();
-    static QByteArray restart();
+    static QByteArray datalength(const QString& data);
+    static QByteArray data(const QString& data);
+    static QByteArray data10(const QString& data);
+    static QByteArray battery(const QString& data);
 
-    static QByteArray getip();
+    static QByteArray update(const QString& data);
+    static QByteArray upload(const QString& data);
+    static QByteArray uploadm(const QString& data);
+
+    //static QByteArray checkupdate(const QString& data);
+    static QByteArray restart(const QString& data);
+
+    static QByteArray getip(const QString& data);
     // beállítások, kulcs-érték pár mentése
     //static bool settings1(const QByteArray& data);
     static void Test();
