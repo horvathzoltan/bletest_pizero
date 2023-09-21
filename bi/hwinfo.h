@@ -26,6 +26,7 @@ public:
     static QString Value(){return _model.toString();}
     static QString LastError(){return _lastError;}
     static QString HwType(){return _model.type;}
+    static QString Serial(){return _model.serial;}
 };
 
 #endif // HWINFO_H

@@ -84,7 +84,6 @@
 #include "bi/hwinfo.h"
 #include "global.h"
 #include "bi/instance.h"
-
 /*
  *
  * edit/preferences/debugger/gdb/Additional Startup Program
@@ -143,7 +142,7 @@ int main(int argc, char *argv[])
     // a tesztprogram fogja a megfelelő rekordot bele felscpzni
     bool hwinfo_ok = HwInfo::Init();
     if(hwinfo_ok){
-        QString hwType = HwInfo::HwType();
+        QString hwType = HwInfo::HwType();        
         McpReader::Init(hwType);
     } else{
         status.set(Status::Err, HwInfo::LastError());
@@ -167,7 +166,9 @@ int main(int argc, char *argv[])
 
     QString test = parser.value(OPTION_TEST);
 
-    BleApi bleApi("Teszt1");
+    QString bleApi_Name = "MasterGait";
+    if(hwinfo_ok) bleApi_Name+=':'+HwInfo::Serial();
+    BleApi bleApi(bleApi_Name);
 
     DoWork::init({.bleApi = &bleApi, .test=test});
 
@@ -180,7 +181,9 @@ int main(int argc, char *argv[])
     bleApi.addrequest(DoWork::commands);
     bleApi.addrequest(DoWork::bommands);
 
-    bleApi.addrequest(DoWork::data);
+    bleApi.addrequest(DoWork::data); // 65 karakter utf-8
+    bleApi.addrequest(DoWork::data10);
+
     bleApi.addrequest(DoWork::datalength);
     bleApi.addrequest(DoWork::battery);
 
@@ -189,7 +192,7 @@ int main(int argc, char *argv[])
     //bleApi.addrequest(DoWork::instance);
 
     bleApi.addrequest(DoWork::update);
-    bleApi.addrequest(DoWork::checkupdate);
+    //bleApi.addrequest(DoWork::checkupdate);
     bleApi.addrequest(DoWork::updatestatus);
     bleApi.addrequest(DoWork::updateasync);
 
@@ -203,6 +206,8 @@ int main(int argc, char *argv[])
     bleApi.AddRequest(0x19, DoWork::bommands);
 
     bleApi.AddRequest(0x37, DoWork::data);
+    bleApi.AddRequest(0x38, DoWork::data10);
+
     bleApi.AddRequest(0x40, DoWork::datalength);
     bleApi.AddRequest(0x54, DoWork::battery);
 
@@ -211,7 +216,9 @@ int main(int argc, char *argv[])
     //bleApi.AddRequest(0x53, DoWork::instance);
 
     bleApi.AddRequest(0x57, DoWork::update);    
-    bleApi.AddRequest(0x58, DoWork::checkupdate);
+    bleApi.AddRequest(0x56, DoWork::upload);
+    bleApi.AddRequest(0x58, DoWork::uploadm);
+
     bleApi.AddRequest(0x59, DoWork::restart);
     bleApi.AddRequest(0x60, DoWork::updatestatus);
     bleApi.AddRequest(0x61, DoWork::updateasync);

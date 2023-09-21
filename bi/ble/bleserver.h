@@ -21,7 +21,10 @@ private:
     void SetAdvertisingData();
     void SetServiceData();
     void Connect();
+
+    volatile bool _isWritten;
 public:
+    bool IsWritten() {return _isWritten;}
     BleServer(QUuid serviceUuid, const QString &name);
     void AddCharacteristic(QUuid charUuid,
                            const QByteArray& b,
@@ -35,6 +38,8 @@ signals:
 
 public slots:
     void Changed(const QLowEnergyCharacteristic &characteristic,
+                 const QByteArray &newValue);
+    void Written(const QLowEnergyCharacteristic &characteristic,
                  const QByteArray &newValue);
 };
 

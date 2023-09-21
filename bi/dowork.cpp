@@ -37,8 +37,10 @@ QByteArray DoWork::miki()
     return a;
 }
 
-QByteArray DoWork::commands()
+QByteArray DoWork::commands(const QString& data)
 {
+    Q_UNUSED(data)
+
     if(!_inited) return{};
     QString c = _params.bleApi->Requests().join(',');
     QByteArray a = c.toUtf8();
@@ -47,8 +49,10 @@ QByteArray DoWork::commands()
 }
 
 
-QByteArray DoWork::bommands()
+QByteArray DoWork::bommands(const QString& data)
 {
+    Q_UNUSED(data)
+
     if(!_inited) return{};
     QString c = _params.bleApi->BRequests().join(',');
     QByteArray a = c.toUtf8();
@@ -56,8 +60,10 @@ QByteArray DoWork::bommands()
     return a;
 }
 
-QByteArray DoWork::lasterr()
-{    
+QByteArray DoWork::lasterr(const QString& data)
+{
+    Q_UNUSED(data)
+
     QByteArray a = status.ToString().toUtf8();
 
     return a;
@@ -68,7 +74,7 @@ void DoWork::Test()
     if(!_inited) return;
     auto commands = _params.test.split(',');
     for(auto&command:commands){
-        QByteArray response = _params.bleApi->Execute(command);
+        QByteArray response = _params.bleApi->Execute(command, "");
         bool ok = !response.isEmpty();
         QString responseStr = ok?QString(response):QStringLiteral("no response");
         zInfo("command:"+command+'\n'+responseStr);
@@ -82,14 +88,18 @@ void DoWork::Test()
 // scp hwinfo_b827eb96cabf.csv pi@10.10.10.102:bletest_pizero/bin/hwinfo.csv
 // "B8:27:EB:E3:CC:41"
 
-QByteArray DoWork::hwinfo()
-{    
+QByteArray DoWork::hwinfo(const QString& data)
+{
+    Q_UNUSED(data)
+
     auto a = HwInfo::Value().toUtf8();
     return a;
 }
 
-QByteArray DoWork::swinfo()
+QByteArray DoWork::swinfo(const QString& data)
 {
+    Q_UNUSED(data)
+
     QString a = QCoreApplication::applicationName();
     QString b = QCoreApplication::applicationVersion();
     QString i = Instance::_value;
@@ -107,20 +117,26 @@ QByteArray DoWork::swinfo()
 //    return c;
 //}
 
-QByteArray DoWork::datalength()
+QByteArray DoWork::datalength(const QString& data)
 {
+    Q_UNUSED(data)
+
     QByteArray a = QString::number(WiringPiHelper::DataLength()).toUtf8();
     return a;
 }
 
-QByteArray DoWork::battery()
+QByteArray DoWork::battery(const QString& data)
 {
+    Q_UNUSED(data)
+
     QByteArray a = QString::number(WiringPiHelper::ReadBattery()).toUtf8();
     return a;
 }
 
-QByteArray DoWork::data()
+QByteArray DoWork::data(const QString& data)
 {
+    Q_UNUSED(data)
+
     auto values = McpReader::GetValues();
 
     QString e;
@@ -132,32 +148,26 @@ QByteArray DoWork::data()
     return a;
 }
 
+QByteArray DoWork::data10(const QString& _data)
+{
+    return data(_data);
+}
+
 // elvileg az updaternek nem kellene újraindítania semmit, hanem
 // ha a run-ig ok volt minden kellene egy exit55 hívás
 // annak kellene a programból kilépnie exit 55-el - az unit újraindul magától
 
-QByteArray DoWork::update()
+QByteArray DoWork::update(const QString& data)
 {
+    Q_UNUSED(data)
+
     QString b = QCoreApplication::applicationVersion();
     bool ok = Updater::Update(b);
     QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
     return a;
 }
 
-QByteArray DoWork::updateasync()
-{
-    QString b = QCoreApplication::applicationVersion();
-    bool ok = Updater::UpdateAsync(b);
-    QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
-    return a;
-}
-
-QByteArray DoWork::checkupdate()
-{
-    QString b = QCoreApplication::applicationVersion();
-    QString buildnum;
-    bool ok = Updater::CheckUpdate(b, &buildnum);
-    QByteArray a = (ok?buildnum:QStringLiteral("ERR")).toUtf8();
+//}
     return a;
 }
 
@@ -165,19 +175,21 @@ QByteArray DoWork::updatestatus()
 {
     QString status = Updater::GetStatus();
     QByteArray a = status.toUtf8();
-    return a;
-}
 
-QByteArray DoWork::restart()
+QByteArray DoWork::restart(const QString& data)
 {
+    Q_UNUSED(data)
+
     QCoreApplication::exit(55);
     return QStringLiteral("Ok").toUtf8();
 }
 
 // ip címek megszerzése - wlan0, eth0
 
-QByteArray DoWork::getip()
+QByteArray DoWork::getip(const QString& data)
 {
+    Q_UNUSED(data)
+
     auto hostaddresses = NetworkHelper::GetLocalAddresses();
 
     QString e;
@@ -190,3 +202,13 @@ QByteArray DoWork::getip()
     return a;
 }
 
+
+QByteArray DoWork::upload(const QString& data){
+
+}
+
+// data: fileid: byte
+// ez bejegyzi egy id alatt és
+QByteArray DoWork::uploadm(const QString& data){
+
+}

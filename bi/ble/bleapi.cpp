@@ -1,15 +1,18 @@
 #include "bleapi.h"
+#include <QThread>
 
 QUuid BleApi::_serviceUuid("00001234-0000-1000-8000-00805F9B34FB");
 QUuid BleApi::_char_response("00001235-0000-1000-8000-00805F9B34FB");
 QUuid BleApi::_char_request("00001237-0000-1000-8000-00805F9B34FB");
+
+QAtomicInt BleApi::_majom;
 
 BleApi::BleApi(const QString& name)
 {        
     _bleServer = new BleServer(_serviceUuid, name);
 
     _bleServer->AddCharacteristic(_char_response, QByteArray(2, 0), QLowEnergyCharacteristic::Notify);
-    _bleServer->AddCharacteristic(_char_request, QByteArray(2, 0), QLowEnergyCharacteristic::Write);
+    _bleServer->AddCharacteristic(_char_request, QByteArray(2, 0), QLowEnergyCharacteristic::WriteNoResponse);
 
     QObject::connect(_bleServer,
                      &BleServer::CharacteristicChanged,
@@ -71,6 +74,8 @@ QStringList BleApi::BRequests() {
 /// ix = 3
 /// L = 6
 ///
+/// 0,138415*|hwinfo
+/// 0,138422*|data
 void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
 {
     const QChar SEP('|');
@@ -79,41 +84,97 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
 
     //if(value.isEmpty()) return;
     int ix = keyValue.lastIndexOf(SEP);
-    QString key, value;
+    QString key, value, valueData;
     if(ix>0){
-        key = keyValue.left(ix);
+        key = keyValue.left(ix); // szeparátortól balra a kulcs, jobbra az érték ami amúgy a command is
         value = keyValue.right(keyValue.length()-ix-1);
     } else{
-        key = QString();
+        key = QString(); // egyébként a kulcs üres és csak command van
         value = keyValue;
     }
+    // a key a kérés kulcsát tartalmazza, ezt a válaszban változtatás nélkül visszaadjuk
+    // a value most a parancsot és az adatot tartalmazza.
 
-    auto r = Execute(value);
+    ix = value.indexOf('*');
+    if(ix>0){
+        valueData = value.right(value.length()-ix-1);
+        value = value.left(ix);
+    }
 
-    if(!key.isEmpty()) r.append((SEP+key).toUtf8());
+    if(value == "data10")
+    {
+        auto tokens = key.split(':');
+        int respCount = 1;
+        int respTime = 50;
+        if(tokens.length()>1){
+            bool ok;
+            int r1 = tokens[1].toInt(&ok);
+            if(ok) respCount = r1;
+        }
+        if(tokens.length()>2){
+            bool ok;
+            int r1 = tokens[2].toInt(&ok);
+            if(ok) respTime = r1;
+        }
+        bool ok = _majom.testAndSetOrdered(0, respCount);
+        _majom.storeRelease(respCount);
+        if(!ok) return;
 
-    _bleServer->WriteCharacteristic(_char_response, r);
+        // command = "id:7|data10" // 7szer ismételünk
+
+        forever
+        {
+            int i = _majom--;
+            if(i <= 0)
+                break;
+
+            auto r = Execute(value, valueData);
+
+            if(!key.isEmpty()) r.append((SEP+tokens[0]+':'+QString::number(i)).toUtf8());
+            //bool ok;
+            //uint reqkey = tokens[0].toUInt(&ok);
+            //bool kimarad = ok && (reqkey%3==1 || reqkey%3==2);
+
+            //if(!kimarad)
+            _bleServer->WriteCharacteristic(_char_response, r);
+
+            //while(!_bleServer->IsWritten())
+            {
+                QThread::msleep(respTime);
+            }
+        }
+
+        _majom.storeRelease(0);
+    }
+    else
+    {
+        QByteArray r = Execute(value, valueData);
+
+        if(!key.isEmpty()) r.append((SEP+key).toUtf8());
+
+        _bleServer->WriteCharacteristic(_char_response, r);
+    }
 }
 
 
-QByteArray BleApi::Execute(const QString& value)
+QByteArray BleApi::Execute(const QString& value, const QString& valueData)
 {
     if(value.isEmpty()) return{};
     if(value.length()==1)
-        return Execute(value.at(0));
+        return Execute(value.at(0), valueData);
 
     auto function = _functions.find(value);
 
     if(function ==_functions.end()) return{};
-    QByteArray response = function.value()();
+    QByteArray response = function.value()(valueData);
     return response;
 }
 
-QByteArray BleApi::Execute(quint8 value)
+QByteArray BleApi::Execute(quint8 value, const QString& valueData)
 {
     auto function =_bfunctions.find(value);
 
     if(function ==_bfunctions.end()) return{};
-    QByteArray response = function.value()();
+    QByteArray response = function.value()(valueData);
     return response;
 }
