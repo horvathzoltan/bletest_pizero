@@ -193,8 +193,8 @@ int main(int argc, char *argv[])
 
     bleApi.addrequest(DoWork::update);
     //bleApi.addrequest(DoWork::checkupdate);
-    bleApi.addrequest(DoWork::updatestatus);
-    bleApi.addrequest(DoWork::updateasync);
+    //bleApi.addrequest(DoWork::updatestatus);
+    //bleApi.addrequest(DoWork::updateasync);
 
     bleApi.addrequest(DoWork::restart);
 
@@ -220,8 +220,8 @@ int main(int argc, char *argv[])
     bleApi.AddRequest(0x58, DoWork::uploadm);
 
     bleApi.AddRequest(0x59, DoWork::restart);
-    bleApi.AddRequest(0x60, DoWork::updatestatus);
-    bleApi.AddRequest(0x61, DoWork::updateasync);
+    //bleApi.AddRequest(0x60, DoWork::updatestatus);
+    //bleApi.AddRequest(0x61, DoWork::updateasync);
 
     bleApi.AddRequest(0x70, DoWork::getip);
 
