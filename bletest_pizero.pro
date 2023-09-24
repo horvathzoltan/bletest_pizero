@@ -23,6 +23,7 @@ SOURCES += \
         global.cpp \
         helpers/commandlineparserhelper.cpp \
         helpers/filenamehelper.cpp \
+        helpers/uploadhelper.cpp \
         helpers/wiringpihelper.cpp \
         helpers/logger.cpp \
         helpers/networkhelper.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/filenamehelper.h \
+    helpers/uploadhelper.h \
     helpers/wiringpihelper.h \
     helpers/logger.h \
     helpers/nameof.h \
@@ -56,14 +58,20 @@ HEADERS += \
 
 DISTFILES +=
 
-contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
-    message(rpi detected)
-    CONFIG += rpi
-    DEFINES += RPI
+linux {
+    contains(QMAKE_HOST.arch, arm.*){
+        message(arm detected)
+        contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
+            message(rpi detected)
+            CONFIG += rpi
+            DEFINES += RPI
+        }
+    }else{
+        message(not pi)
+    }
 }
 
-unix:rpi:
-{
+unix:rpi:{
     # egyes
     #LIBS += -L/home/anti/raspi/sysroot/usr/lib -lraspicam -lraspicam_cv
     #LIBS += -L/home/anti/raspi/sysroot/usr/lib/lib -lopencv_dnn -lopencv_gapi -lopencv_highgui -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_imgproc -lopencv_core

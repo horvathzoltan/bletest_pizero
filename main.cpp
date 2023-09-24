@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     } else{
         status.set(Status::Err, HwInfo::LastError());
         zInfo("hwinfo:"+status.ToString());
-        return 1;
+        //return 1;
     }
 
     zInfo("instance:"+Instance::_value);
@@ -192,9 +192,8 @@ int main(int argc, char *argv[])
     //bleApi.addrequest(DoWork::instance);
 
     bleApi.addrequest(DoWork::update);
-    //bleApi.addrequest(DoWork::checkupdate);
-    //bleApi.addrequest(DoWork::updatestatus);
-    //bleApi.addrequest(DoWork::updateasync);
+    bleApi.addrequest(DoWork::upload);
+    bleApi.addrequest(DoWork::uploadm);
 
     bleApi.addrequest(DoWork::restart);
 

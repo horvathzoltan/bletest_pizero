@@ -51,7 +51,11 @@ QVarLengthArray<int> WiringPiHelper::ReadMcp(const QVarLengthArray<McpSetupModel
     int j=0;
     for(auto&m:models){
         for(int i=0;i<m.chanels;i++){
+#ifdef RPI
             v[j] = analogRead(m.base + i);
+#else
+            v[j] = 125+i;
+#endif
             if(_verbose)zInfo("d["+QString::number(j)+"]="+QString::number(v[j]));
             j++;
         }

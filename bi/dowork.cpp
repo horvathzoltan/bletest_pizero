@@ -2,6 +2,7 @@
 #include "global.h"
 #include "helpers/logger.h"
 #include "helpers/networkhelper.h"
+#include "helpers/uploadhelper.h"
 #include "instance.h"
 #include "bi/hwinfo.h"
 #include "bi/mcpreader.h"
@@ -69,12 +70,36 @@ QByteArray DoWork::lasterr(const QString& data)
     return a;
 }
 
+// -t 0,123|uploadm*12345678
+
 void DoWork::Test()
 {
     if(!_inited) return;
-    auto commands = _params.test.split(',');
+    auto commands = _params.test.split(';');
     for(auto&command:commands){
-        QByteArray response = _params.bleApi->Execute(command, "");
+
+        if(command.startsWith('\"') && command.endsWith('\"')){
+            command = command.right(command.length()-2);
+        }
+
+        int ix = command.lastIndexOf('|');
+
+        QString key, value, valueData;
+        if(ix>0){
+            key = command.left(ix); // szeparátortól balra a kulcs, jobbra az érték ami amúgy a command is
+            value = command.right(command.length()-ix-1);
+        } else{
+            key = QString(); // egyébként a kulcs üres és csak command van
+            value = command;
+        }
+
+        int ix2 = value.indexOf('*');
+        if(ix2>0){
+            valueData = value.right(value.length()-ix2-1);
+            value = value.left(ix2);
+        }
+
+        QByteArray response = _params.bleApi->Execute(value, valueData);
         bool ok = !response.isEmpty();
         QString responseStr = ok?QString(response):QStringLiteral("no response");
         zInfo("command:"+command+'\n'+responseStr);
@@ -167,14 +192,11 @@ QByteArray DoWork::update(const QString& data)
     return a;
 }
 
-//}
-    return a;
-}
-
 QByteArray DoWork::updatestatus()
 {
     QString status = Updater::GetStatus();
     QByteArray a = status.toUtf8();
+}
 
 QByteArray DoWork::restart(const QString& data)
 {
@@ -203,12 +225,23 @@ QByteArray DoWork::getip(const QString& data)
 }
 
 
-QByteArray DoWork::upload(const QString& data){
-
-}
-
 // data: fileid: byte
-// ez bejegyzi egy id alatt és
+// ez bejegyzi egy id alatt
+// -t "0,123|uploadm*file1.txt,30"
 QByteArray DoWork::uploadm(const QString& data){
 
+    UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
+    int key = UploadHelper::AddUpload(m);
+
+    QByteArray a = QString::number(key).toUtf8();
+    return a;
+}
+
+
+QByteArray DoWork::upload(const QString& data){
+    zInfo("hutty2");
+
+    QString e = "bbb";
+    QByteArray a = e.toUtf8();
+    return a;
 }

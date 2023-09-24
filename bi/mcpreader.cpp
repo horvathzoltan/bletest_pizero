@@ -8,6 +8,7 @@ bool McpReader::Init(const QString& typeName)
 {
     _inited = false;
 
+#ifdef RPI
     if(typeName.compare(QStringLiteral("logger_2v0"), Qt::CaseInsensitive)){
         _models = {
             {BASE_0, SPI_0, MCP3008_CHANNELS},
@@ -23,7 +24,8 @@ bool McpReader::Init(const QString& typeName)
     bool ok = WiringPiHelper::McpSetup(_models);
     if(!ok) return false;
     _inited = true;
-    return true;
+#endif
+    return _inited;
 }
 
 QVarLengthArray<int> McpReader::GetValues()
