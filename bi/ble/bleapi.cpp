@@ -146,6 +146,18 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
 
         _majom.storeRelease(0);
     }
+    else if(value == "aaa"){
+        int l = keyValue.length();
+
+        QByteArray r1 = Execute(value, valueData);
+
+        QByteArray r = QString::number(l).toUtf8()+'/'+r1;
+
+        if(!key.isEmpty()) r.append((SEP+key).toUtf8());
+
+        _bleServer->WriteCharacteristic(_char_response, r);
+
+    }
     else
     {
         QByteArray r = Execute(value, valueData);

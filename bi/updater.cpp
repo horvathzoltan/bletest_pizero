@@ -6,6 +6,20 @@
 #include <QStringList>
 #include <QDir>
 
+/*
+ *
+cat /etc/wpa_supplicant/wpa_supplicant.conf
+
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=HU
+
+network={
+    ssid="MANUALM99"
+    psk="akeraker"
+    id_str="mestercipo"
+}
+*/
 bool Updater::UpdateAsync(const QString& version)
 {
     return true;
@@ -72,6 +86,22 @@ QString Updater::GetStatus(){
 
     return e.last();
 }
+
+//bool Updater::Reboot(const QString& version)
+//{
+//    if(version.isEmpty()) return false;
+//    ProcessHelper::Model cmd {
+//        .cmd = "updater.sh",
+//        .args ={version, "restart"},
+//        .timeout = -1,
+//        .showStdErr = false,
+//        .path = QDir().absolutePath()
+//    };
+//    auto out = ProcessHelper::Execute3(cmd);
+//    QString msg = out.ToString();
+//    zInfo("msg:"+ msg);
+//    return !out.exitCode;
+//}
 
 /*
 pi@raspberrypi:~ $ cat status.txt

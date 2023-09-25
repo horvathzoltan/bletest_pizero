@@ -58,17 +58,25 @@ HEADERS += \
 
 DISTFILES +=
 
-linux {
-    contains(QMAKE_HOST.arch, arm.*){
-        message(arm detected)
-        contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
-            message(rpi detected)
-            CONFIG += rpi
-            DEFINES += RPI
-        }
-    }else{
-        message(not pi)
-    }
+#linux: {
+#    contains(QMAKE_HOST.arch, arm.*){
+#        message(arm detected)
+#        contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
+#            message(rpi detected)
+#            CONFIG += rpi
+#            DEFINES += RPI
+#        }
+#    } else {
+#        message(not pi 2)
+#    }
+#}
+
+contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
+    message(rpi detected)
+    CONFIG += rpi
+    DEFINES += RPI
+} else {
+    message(not pi 2)
 }
 
 unix:rpi:{

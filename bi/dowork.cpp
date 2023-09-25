@@ -192,11 +192,11 @@ QByteArray DoWork::update(const QString& data)
     return a;
 }
 
-QByteArray DoWork::updatestatus()
-{
-    QString status = Updater::GetStatus();
-    QByteArray a = status.toUtf8();
-}
+//QByteArray DoWork::updatestatus()
+//{
+//    QString status = Updater::GetStatus();
+//    QByteArray a = status.toUtf8();
+//}
 
 QByteArray DoWork::restart(const QString& data)
 {
@@ -205,6 +205,14 @@ QByteArray DoWork::restart(const QString& data)
     QCoreApplication::exit(55);
     return QStringLiteral("Ok").toUtf8();
 }
+
+//QByteArray DoWork::reboot(const QString& data)
+//{
+//    Q_UNUSED(data)
+
+//    QCoreApplication::exit(55);
+//    return QStringLiteral("Ok").toUtf8();
+//}
 
 // ip címek megszerzése - wlan0, eth0
 
@@ -228,20 +236,27 @@ QByteArray DoWork::getip(const QString& data)
 // data: fileid: byte
 // ez bejegyzi egy id alatt
 // -t "0,123|uploadm*file1.txt,30"
-QByteArray DoWork::uploadm(const QString& data){
+//QByteArray DoWork::uploadm(const QString& data){
 
-    UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
-    int key = UploadHelper::AddUpload(m);
+//    UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
+//    int key = UploadHelper::AddUpload(m);
 
-    QByteArray a = QString::number(key).toUtf8();
+//    QByteArray a = QString::number(key).toUtf8();
+//    return a;
+//}
+
+QByteArray DoWork::aaa(const QString &data)
+{
+    int l = data.length();
+    QByteArray a = QString::number(l).toUtf8();
     return a;
 }
 
 
-QByteArray DoWork::upload(const QString& data){
-    zInfo("hutty2");
+//QByteArray DoWork::upload(const QString& data){
+//    zInfo("hutty2");
 
-    QString e = "bbb";
-    QByteArray a = e.toUtf8();
-    return a;
-}
+//    QString e = "bbb";
+//    QByteArray a = e.toUtf8();
+//    return a;
+//}
