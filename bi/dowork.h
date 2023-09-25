@@ -35,16 +35,18 @@ public:
     static QByteArray data(const QString& data);
     static QByteArray data10(const QString& data);
     static QByteArray battery(const QString& data);
-    static QByteArray updateasync();
+    //static QByteArray updateasync();
 
-    static QByteArray updatestatus();
+    //static QByteArray updatestatus();
 
     static QByteArray update(const QString& data);
-    static QByteArray upload(const QString& data);
-    static QByteArray uploadm(const QString& data);
+    //static QByteArray upload(const QString& data);
+    //static QByteArray uploadm(const QString& data);
+    static QByteArray aaa(const QString& data);
 
     //static QByteArray checkupdate(const QString& data);
-    static QByteArray restart(const QString& data);
+    static QByteArray restart(const QString& data);    
+    //static QByteArray reboot(const QString& data);
 
     static QByteArray getip(const QString& data);
     // beállítások, kulcs-érték pár mentése

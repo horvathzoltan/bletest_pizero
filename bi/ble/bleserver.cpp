@@ -1,4 +1,5 @@
 #include "bleserver.h"
+#include "helpers/logger.h"
 
 #include <QLowEnergyAdvertisingParameters>
 #include <QLowEnergyConnectionParameters>
@@ -36,6 +37,12 @@ void BleServer::AddCharacteristic(
     charData.setUuid(charUuid);
     charData.setValue(b);
     charData.setProperties(props);
+    //charData.setValueLength(3,1024);
+    auto a0 = charData.minimumValueLength();
+    auto a1 = charData.maximumValueLength();
+
+    zInfo("min-max:"+QString::number(a0)+"-"+QString::number(a1));
+
     const QLowEnergyDescriptorData
             descriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,b);
     charData.addDescriptor(descriptorData);

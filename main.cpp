@@ -112,6 +112,9 @@ Working directory: %{sourceDir}
 */
 
 // -t commands,swinfo,instance,hwinfo,datalength,data
+
+// wifi reconnect:
+// echo "qw" | sudo -S -k wpa_cli -i wlan0 reconfigure
 extern Status status;
 
 int main(int argc, char *argv[])
@@ -192,10 +195,12 @@ int main(int argc, char *argv[])
     //bleApi.addrequest(DoWork::instance);
 
     bleApi.addrequest(DoWork::update);
-    bleApi.addrequest(DoWork::upload);
-    bleApi.addrequest(DoWork::uploadm);
+    //bleApi.addrequest(DoWork::upload);
+   // bleApi.addrequest(DoWork::uploadm);
+    bleApi.addrequest(DoWork::aaa);
 
     bleApi.addrequest(DoWork::restart);
+    //bleApi.addrequest(DoWork::reboot);
 
     bleApi.addrequest(DoWork::getip);
 
@@ -215,10 +220,11 @@ int main(int argc, char *argv[])
     //bleApi.AddRequest(0x53, DoWork::instance);
 
     bleApi.AddRequest(0x57, DoWork::update);    
-    bleApi.AddRequest(0x56, DoWork::upload);
-    bleApi.AddRequest(0x58, DoWork::uploadm);
+    //bleApi.AddRequest(0x56, DoWork::upload);
+    //bleApi.AddRequest(0x58, DoWork::uploadm);
 
     bleApi.AddRequest(0x59, DoWork::restart);
+    //bleApi.AddRequest(0x5a, DoWork::reboot);
     //bleApi.AddRequest(0x60, DoWork::updatestatus);
     //bleApi.AddRequest(0x61, DoWork::updateasync);
 
