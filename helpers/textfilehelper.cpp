@@ -9,6 +9,7 @@ const QString TextFileHelper::PNE = QStringLiteral("path is not absolute: %1");
 const QString TextFileHelper::FNE = QStringLiteral("file not exists: %1");
 const QString TextFileHelper::CRF = QStringLiteral("cannot read file (%1): %2");
 const QString TextFileHelper::LOK = QStringLiteral("loaded: %1");
+const QString TextFileHelper::CWF = QStringLiteral("cannot write file (%1): %2");
 
 void TextFileHelper::setVerbose(bool v)
 {
@@ -166,4 +167,27 @@ void TextFileHelper::SetUtf8Encoding(QTextStream* st)
 #elif QT_VERSION >= 0x06
         st->setEncoding(QStringConverter::Utf8);
 #endif
+}
+
+bool TextFileHelper::Save(const QString& txt, const QString& fn, bool isAppend) {
+
+        QFile f(fn);
+
+        auto om = QIODevice::WriteOnly | QIODevice::Text; // openmode
+        if(isAppend) om |= QIODevice::Append;
+
+        bool opened = f.open(om);
+        if (!opened){
+        _lastError = CWF.arg(fn);
+        if(_verbose) zInfo(_lastError);
+        return false;
+        }
+
+        QTextStream out(&f);
+        SetUtf8Encoding(&out);
+        //out.setCodec(QTextCodec::codecForName("UTF-8"));
+        //out.setGenerateByteOrderMark(true);
+        out << txt;//.toUtf8();
+        f.close();
+        return true;
 }

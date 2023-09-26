@@ -54,9 +54,13 @@ void BleServer::AddCharacteristic(
 void BleServer::Changed(const QLowEnergyCharacteristic &characteristic,
              const QByteArray &newValue)
 {
+
     //QLowEnergyCharacteristic::PropertyTypes props = characteristic.properties();
-    //bool isIndicate = props.testFlag(QLowEnergyCharacteristic::Indicate);
+    //bool isIndicate = props.testFlag(QLowEnergyCharacteristic::Write);
     //_isWritten = true;
+    //auto a = _service->state();
+    //characteristic.properties()
+    //_controller->
     emit CharacteristicChanged(characteristic.uuid(), QString(newValue));
 }
 

@@ -236,14 +236,30 @@ QByteArray DoWork::getip(const QString& data)
 // data: fileid: byte
 // ez bejegyzi egy id alatt
 // -t "0,123|uploadm*file1.txt,30"
-//QByteArray DoWork::uploadm(const QString& data){
+QByteArray DoWork::uploadm(const QString& data){
 
-//    UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
-//    int key = UploadHelper::AddUpload(m);
+    UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
+    UploadHelper::UploadResponseModel um = UploadHelper::AddUpload(m);
 
-//    QByteArray a = QString::number(key).toUtf8();
-//    return a;
-//}
+    QByteArray a = um.toString().toUtf8();
+    return a;
+}
+
+QByteArray DoWork::upload(const QString& data){
+    UploadHelper::UploadModel m = UploadHelper::UploadModel::Parse(data);
+    UploadHelper::UploadResponseModel um = UploadHelper::Upload(m, false);
+
+    QByteArray a = um.toString().toUtf8();
+    return a;
+}
+
+QByteArray DoWork::upload2(const QString& data){
+    UploadHelper::UploadModel m = UploadHelper::UploadModel::Parse(data);
+    UploadHelper::UploadResponseModel um = UploadHelper::Upload(m, true);
+
+    QByteArray a = um.toString().toUtf8();
+    return a;
+}
 
 QByteArray DoWork::aaa(const QString &data)
 {
