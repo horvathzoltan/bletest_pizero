@@ -1,9 +1,11 @@
 #include "bleapi.h"
+#include "helpers/logger.h"
 #include <QThread>
 
 QUuid BleApi::_serviceUuid("00001234-0000-1000-8000-00805F9B34FB");
 QUuid BleApi::_char_response("00001235-0000-1000-8000-00805F9B34FB");
 QUuid BleApi::_char_request("00001237-0000-1000-8000-00805F9B34FB");
+QUuid BleApi::_char_update("00001236-0000-1000-8000-00805F9B34FB");
 
 QAtomicInt BleApi::_majom;
 
@@ -13,6 +15,7 @@ BleApi::BleApi(const QString& name)
 
     _bleServer->AddCharacteristic(_char_response, QByteArray(2, 0), QLowEnergyCharacteristic::Notify);
     _bleServer->AddCharacteristic(_char_request, QByteArray(2, 0), QLowEnergyCharacteristic::WriteNoResponse);
+    _bleServer->AddCharacteristic(_char_update, QByteArray(2, 0), QLowEnergyCharacteristic::Write);
 
     QObject::connect(_bleServer,
                      &BleServer::CharacteristicChanged,
@@ -79,21 +82,33 @@ QStringList BleApi::BRequests() {
 void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
 {
     const QChar SEP('|');
-    if(uuid != _char_request) return;
-    if(keyValue.isEmpty()) return;
+    static QString lastKey;
 
-    //if(value.isEmpty()) return;
+    zInfo(QStringLiteral("Changed:")+uuid.toString());
+    if(keyValue.isEmpty()) return;
+    bool isLongReq = uuid == _char_update;
+    bool isShortReq = uuid == _char_request;
+
+    if(!(isLongReq || isShortReq)) return;
     int ix = keyValue.lastIndexOf(SEP);
+    // ha nincs szeparátor (kulcs sincs) és hosszú kérés, dobjuk
+    if(isLongReq && ix<=0) return;
     QString key, value, valueData;
+
     if(ix>0){
         key = keyValue.left(ix); // szeparátortól balra a kulcs, jobbra az érték ami amúgy a command is
         value = keyValue.right(keyValue.length()-ix-1);
-    } else{
+    } else {
         key = QString(); // egyébként a kulcs üres és csak command van
         value = keyValue;
     }
     // a key a kérés kulcsát tartalmazza, ezt a válaszban változtatás nélkül visszaadjuk
     // a value most a parancsot és az adatot tartalmazza.
+
+    if(!key.isEmpty() && key==lastKey) return;
+    lastKey = key;
+
+    zInfo(QStringLiteral("Changed:")+key+'|'+value);
 
     ix = value.indexOf('*');
     if(ix>0){
@@ -146,24 +161,19 @@ void BleApi::Changed(QBluetoothUuid uuid, const QString& keyValue)
 
         _majom.storeRelease(0);
     }
-    else if(value == "aaa"){
+    else if(value == "aaa"){        
         int l = keyValue.length();
-
         QByteArray r1 = Execute(value, valueData);
-
         QByteArray r = QString::number(l).toUtf8()+'/'+r1;
-
-        if(!key.isEmpty()) r.append((SEP+key).toUtf8());
-
+        if(!key.isEmpty()) r.append((SEP+key).toUtf8());        
+        zInfo(QStringLiteral("response:")+QString(r));
         _bleServer->WriteCharacteristic(_char_response, r);
-
+        zInfo(QStringLiteral("sent"));
     }
     else
     {
         QByteArray r = Execute(value, valueData);
-
         if(!key.isEmpty()) r.append((SEP+key).toUtf8());
-
         _bleServer->WriteCharacteristic(_char_response, r);
     }
 }

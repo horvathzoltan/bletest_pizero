@@ -28,7 +28,7 @@ QString FileNameHelper::UploadDir()
 
 QString FileNameHelper::UploadMetaFileName()
 {
-    return QDir::home().filePath("uploadMeta.ini");
+    return UploadFileName("uploadMeta.ini");
 }
 
 QString FileNameHelper::UploadFileName(const QString &fn)

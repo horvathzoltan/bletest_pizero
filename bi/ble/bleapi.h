@@ -21,11 +21,10 @@ private:
     QMap<QString, BleApiFn> _functions;
     QMap<quint8, BleApiFn> _bfunctions;
 
-    static QUuid _serviceUuid,_char_response,_char_request;//_char2
+    static QUuid _serviceUuid,_char_response,_char_request,_char_update;//_char2
     QByteArray Execute(quint8 value, const QString& valueData);
 
     static QAtomicInt _majom;
-
 public:    
     BleApi(const QString& name);
     ~BleApi();
