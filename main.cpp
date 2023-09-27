@@ -61,6 +61,7 @@
 #include <QtBluetooth/qlowenergyservicedata.h>
 #include <QtCore/qbytearray.h>
 #include <QCommandLineParser>
+#include <helpers/uploadhelper.h>
 #ifndef Q_OS_ANDROID
 #include <QtCore/qcoreapplication.h>
 #else
@@ -244,5 +245,8 @@ int main(int argc, char *argv[])
     }
 
     int e = app.exec();
+
+    //UploadHelper::SaveMeta();
+    zInfo("exit:"+QString::number(e))
     return e;
 }

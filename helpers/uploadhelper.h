@@ -43,10 +43,11 @@ private:
     static QMap<int,MetaData> _metaData;
 
     static void LoadMeta();
-    static void SaveMeta();
+
 public:
     static UploadResponseModel AddUpload(const MetaData& m);
     static UploadResponseModel Upload(const UploadModel &m, bool isBase64);
+    static void SaveMeta();
 };
 
 #endif // UPLOADHELPER_H
