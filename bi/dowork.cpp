@@ -241,14 +241,17 @@ QByteArray DoWork::uploadm(const QString& data){
     UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
     UploadHelper::UploadResponseModel um = UploadHelper::AddUpload(m);
 
+    zInfo("uploadm:"+um.toString())
     QByteArray a = um.toString().toUtf8();
     return a;
 }
 
+//
 QByteArray DoWork::upload(const QString& data){
     UploadHelper::UploadModel m = UploadHelper::UploadModel::Parse(data);
     UploadHelper::UploadResponseModel um = UploadHelper::Upload(m, false);
 
+    zInfo("upload:"+um.toString())
     QByteArray a = um.toString().toUtf8();
     return a;
 }
@@ -257,6 +260,7 @@ QByteArray DoWork::upload2(const QString& data){
     UploadHelper::UploadModel m = UploadHelper::UploadModel::Parse(data);
     UploadHelper::UploadResponseModel um = UploadHelper::Upload(m, true);
 
+    zInfo("upload2:"+um.toString())
     QByteArray a = um.toString().toUtf8();
     return a;
 }
