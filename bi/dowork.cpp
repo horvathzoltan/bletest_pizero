@@ -184,10 +184,7 @@ QByteArray DoWork::data10(const QString& _data)
 
 QByteArray DoWork::update(const QString& data)
 {
-    Q_UNUSED(data)
-
-    QString b = QCoreApplication::applicationVersion();
-    bool ok = Updater::Update(b);
+    bool ok = Updater::Update(data);
     QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
     return a;
 }
