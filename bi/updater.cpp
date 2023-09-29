@@ -21,12 +21,11 @@ bool Updater::Update(const QString& version)
         .path = path
     };
     auto out = ProcessHelper::Execute3(cmd);
-    QString msg = out.ToString();
-    msg +="path:"+path;
+    QString msg = out.ToString();    
 
     if(_verbose){
         zInfo("msg:"+ msg);
-        TextFileHelper::Save(msg, "\\home\\pi\\updater.log", false);
+        //TextFileHelper::Save(msg, "\\home\\pi\\updater.log", false);
     }
 
     return !out.exitCode;
