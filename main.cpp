@@ -138,7 +138,8 @@ int main(int argc, char *argv[])
 
     Logger::Init(Logger::ErrLevel::INFO, Logger::DbgLevel::TRACE, true, true);
     QString user = qgetenv("USER");
-    zInfo(QStringLiteral("started ")+target+" as "+user);
+    zInfo(QStringLiteral("started ")+target+"_"+Buildnumber::_value+" as "+user);
+
     FileNameHelper::Init(QCoreApplication::applicationDirPath());
     WiringPiHelper::Init();
 
