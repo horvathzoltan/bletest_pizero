@@ -62,6 +62,8 @@
 #include <QtCore/qbytearray.h>
 #include <QCommandLineParser>
 #include <helpers/uploadhelper.h>
+#include <helpers/uploadhelper.h>
+#include <bi/updater.h>
 #ifndef Q_OS_ANDROID
 #include <QtCore/qcoreapplication.h>
 #else
@@ -143,6 +145,7 @@ int main(int argc, char *argv[])
     FileNameHelper::Init(QCoreApplication::applicationDirPath());
     WiringPiHelper::Init();
 
+    Updater::SetVerbose(true);
     // ha először indul, ez még nem az aktuális, és nem lesz felinitelve
     // a tesztprogram fogja a megfelelő rekordot bele felscpzni
     bool hwinfo_ok = HwInfo::Init();

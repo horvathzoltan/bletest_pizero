@@ -4,6 +4,7 @@
 #include "helpers/processhelper.h"
 #include <QStringList>
 #include <QDir>
+#include <helpers/textfilehelper.h>
 
 bool Updater::Update(const QString& version)
 {
@@ -20,8 +21,13 @@ bool Updater::Update(const QString& version)
         .path = path
     };
     auto out = ProcessHelper::Execute3(cmd);
-    QString msg = out.ToString();
-    zInfo("msg:"+ msg);
+    QString msg = out.ToString();    
+
+    if(_verbose){
+        zInfo("msg:"+ msg);
+        //TextFileHelper::Save(msg, "\\home\\pi\\updater.log", false);
+    }
+
     return !out.exitCode;
 }
 
