@@ -9,9 +9,11 @@ public:
     struct Model{
         QString cmd;
         QStringList args;
-        int timeout;
+        int startTimeout;
+        int runTimeout;
         bool showStdErr = true;
         QString path;
+        bool detached;
 
         static Model Parse(const QString& str);
         static QList<Model> ParseAsSudo(const QString& str, const QString& pwd);
@@ -25,6 +27,7 @@ public:
         QString stdOut;
         QString stdErr;
         int exitCode = 1;
+        bool isStarted=false;
         QString ToString();
     };
 

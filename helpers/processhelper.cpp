@@ -123,7 +123,7 @@ ProcessHelper::Output ProcessHelper::Execute3(const QList<Model>& models){
         }
 
 
-        bool isFinished = p->waitForFinished(m.timeout);
+        bool isFinished = p->waitForFinished(m.startTimeout);
 
         //QObject::disconnect(p, &QIODevice::readyRead, nullptr, nullptr);
 
@@ -155,14 +155,12 @@ ProcessHelper::Output ProcessHelper::Execute3(const QList<Model>& models){
     return e;
 }
 
-// QCoreApplication::applicationDirPath();
-//ProcessHelper::Output ProcessHelper::Execute3(const QString& cmd, const QStringList& args, int timeout){
 ProcessHelper::Output ProcessHelper::Execute3(const Model& m){
     if(m.cmd.isEmpty()) return {};
 
     QCoreApplication::applicationDirPath();
     QProcess process;
-    //process.setProcessChannelMode(QProcess::ForwardedChannels);
+
     static QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("LD_LIBRARY_PATH", "/usr/lib"); // workaround - https://bugreports.qt.io/browse/QTBUG-2284
     process.setProcessEnvironment(env);
@@ -171,29 +169,39 @@ ProcessHelper::Output ProcessHelper::Execute3(const Model& m){
 
     process.setWorkingDirectory(path);
 
-//    if(m.args.isEmpty())
-//        process.start(m.cmd);
-//    else
-    process.start(m.cmd,m.args);
 
-    if (!process.waitForStarted(-1))
+    if(m.detached)
     {
-        if(_verbose) zInfo("Could not start");
-        return {"","",1};
+        bool started = process.startDetached(m.cmd,m.args);
+        return {"","",0,started};
     }
-
-    bool isFinished = process.waitForFinished(m.timeout);
-
-    if(!isFinished)
+    else
     {
-        process.close();
-        return {"","",1};
-    }
+        process.start(m.cmd,m.args);
+        bool started = process.waitForStarted(m.startTimeout);
 
-    Output e{process.readAllStandardOutput(),
-             process.readAllStandardError(),
-             process.exitCode()};
-    return e;
+        if (!started)
+        {
+            if(_verbose) zInfo("Could not start");
+            return {"","",0,started};
+        }
+        else
+        {
+            bool isFinished = process.waitForFinished(m.runTimeout);
+            if(!isFinished)
+            {
+                process.close();
+                return {"","",-1,started};
+            }
+        }
+        return
+            {
+                process.readAllStandardOutput(),
+                process.readAllStandardError(),
+                process.exitCode(),
+                started
+            };
+    }
 }
 
 ProcessHelper::Model ProcessHelper::Model::Parse(const QString &str)
@@ -202,8 +210,8 @@ ProcessHelper::Model ProcessHelper::Model::Parse(const QString &str)
     QStringList tokens = str.split(' ', Qt::SkipEmptyParts);
 
     if(tokens.length()<1) return {};
-    if(tokens.length()==1) return {.cmd = tokens[0], .args = {}, .timeout=-1};
-    return {.cmd = tokens[0], .args = tokens.mid(1), .timeout=-1};
+    if(tokens.length()==1) return {.cmd = tokens[0], .args = {}, .startTimeout=-1};
+    return {.cmd = tokens[0], .args = tokens.mid(1), .startTimeout=-1};
 }
 
 QList<ProcessHelper::Model> ProcessHelper::Model::ParseAsSudo(const QString &str, const QString& pwd)
@@ -230,7 +238,7 @@ void ProcessHelper::Model::Sudo()
 
 ProcessHelper::Model ProcessHelper::Model::InsertPasswd(const QString &p)
 {
-    Model m1 = {.cmd = "echo", .args = {p}, .timeout=-1};
+    Model m1 = {.cmd = "echo", .args = {p}, .startTimeout=-1};
     if(cmd.toLower()=="sudo")
         args.insert(0, "-S");
     return m1;

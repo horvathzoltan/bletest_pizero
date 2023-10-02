@@ -16,18 +16,19 @@ bool Updater::Update(const QString& version)
     ProcessHelper::Model cmd {
         .cmd = "updater.sh",
         .args ={version, "restart"},
-        .timeout = -1,
+        .startTimeout = -1, // akármeddig várunk
+        .runTimeout = -1, // akármeddig várunk
         .showStdErr = false,
-        .path = path
+        .path = path,
+        .detached = true
     };
-    auto out = ProcessHelper::Execute3(cmd);
+
+    ProcessHelper::Output out = ProcessHelper::Execute3(cmd);
     QString msg = out.ToString();    
 
-    if(_verbose){
-        zInfo("msg:"+ msg);
-        //TextFileHelper::Save(msg, "\\home\\pi\\updater.log", false);
-    }
+    if(_verbose) zInfo("msg:"+ msg);
 
-    return !out.exitCode;
+
+    return out.isStarted;
 }
 
