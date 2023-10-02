@@ -6,6 +6,8 @@
 #include <QDir>
 #include <helpers/textfilehelper.h>
 
+bool Updater::_verbose = false;
+
 bool Updater::Update(const QString& version)
 {
     if(version.isEmpty()) return false;
@@ -27,7 +29,6 @@ bool Updater::Update(const QString& version)
     QString msg = out.ToString();    
 
     if(_verbose) zInfo("msg:"+ msg);
-
 
     return out.isStarted;
 }
