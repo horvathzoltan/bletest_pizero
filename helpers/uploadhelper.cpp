@@ -115,7 +115,7 @@ void UploadHelper::SaveMeta(){
 UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
 {
     UploadResponseModel retVal;
-    bool valid = m.isValid();    
+    bool valid = m.isValid();
 
     if(valid){
         QString udPath = FileNameHelper::UploadDir();
@@ -165,7 +165,6 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
                 int metaSize = _metaData[retVal.key].fileSize;
                 if(m.fileSize!=metaSize){
                     _metaData[retVal.key]=m;
-
                     SaveMeta();
                 }
             } else{

@@ -269,6 +269,13 @@ QByteArray DoWork::aaa(const QString &data)
     return a;
 }
 
+QByteArray DoWork::aab(const QString &data)
+{
+    QString str = QStringLiteral("abcdefghijklmnokqrstuvwzxyzABCDEFGHIJKLMNOKQRSTUVWZXYZ");
+    QByteArray a = str.toUtf8();
+    return a;
+}
+
 
 //QByteArray DoWork::upload(const QString& data){
 //    zInfo("hutty2");
