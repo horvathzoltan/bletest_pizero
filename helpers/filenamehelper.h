@@ -13,6 +13,8 @@ public:
     static QString UploadFileName(const QString &fn);
     static QString UploadDir();
     static QString UploadMetaFileName();
+    static bool CreateDir(const QString& udPath);
+    static bool zInfo(const char *);
 };
 
 #endif // FILENAMEHELPER_H

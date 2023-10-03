@@ -31,6 +31,24 @@ QString FileNameHelper::UploadMetaFileName()
     return UploadFileName("uploadMeta.ini");
 }
 
+bool FileNameHelper::CreateDir(const QString& udPath)
+{
+    bool retVal = false;
+    QDir ud(udPath);
+    if(ud.exists())
+    {
+        retVal = true;
+    }
+    else
+    {
+        if(ud.mkpath(udPath))
+        {
+            retVal = true;
+        }
+    }
+    return retVal;
+}
+
 QString FileNameHelper::UploadFileName(const QString &fn)
 {
     if(!_inited) return {};

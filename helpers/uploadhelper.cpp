@@ -118,65 +118,89 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
     bool valid = m.isValid();    
 
     if(valid){
-        QString udPath = FileNameHelper::UploadDir();
-
-        zInfo("udPath:"+udPath)
-
-        QDir ud(udPath);
-        if(!ud.exists()){
-            bool ok = ud.mkpath(udPath);
-            if(!ok){
-                zInfo("udPath: cannot make path")
-            }
-        }
-
-        QString upd = FileNameHelper::UploadFileName(m.fileName);
-        QFile f(upd);
-
         bool noMeta = _metaData.empty();
         if(noMeta){
             LoadMeta();
         }
-
-        bool isFileExists = f.exists();
         retVal.key = MetaData::Find(_metaData, m.fileName);
         bool isMetaExists = retVal.key>-1;
+        int metaSize = (isMetaExists)?_metaData[retVal.key].fileSize:-1;
 
-        //ha a fájl létezik
-        if(isFileExists){
-            if(isMetaExists){// és megvan a downloadok között, is,
-                int metaSize = _metaData[retVal.key].fileSize;
-                if(f.size()==metaSize){// és a mérete megfelelő, folytathatjuk
-                    retVal.offset = metaSize;
-                }else{
-                    // nem jó a mérete, újrakezdjük
-                    retVal.offset = 0;
-                    f.resize(0);
+
+        QString udPath = FileNameHelper::UploadDir();
+        zInfo("udPath:"+udPath)
+        bool isUdPathExists = FileNameHelper::CreateDir(udPath);
+        bool valid = isUdPathExists && (!isMetaExists || metaSize==m.fileSize);
+        if(!valid)
+        {
+             zInfo("udPath: not exists")
+        }
+        else
+        {
+            QString upd = FileNameHelper::UploadFileName(m.fileName);
+            QFile f(upd);
+
+            bool isFileExists = f.exists();
+            qint64 fileSize = (isFileExists)?f.size():-1;
+
+            //ha a fájl létezik
+            if(isFileExists)
+            {
+                retVal.offset = fileSize;
+                if(isMetaExists) // és megvan a downloadok között, is,
+                {
+                    if(fileSize == metaSize) // és a mérete megfelel, rendben vagyunk
+                    {
+                        retVal.flag=1;
+                        // letöltve, kiszedjük a metából
+                    }
+                    else if(fileSize > metaSize) // ha nagyobb, akkor hibás
+                    {
+                        retVal.flag=2;
+                        // letöltve és hibás, kiszedjük a metábl
+                    }
+                    else // ha kisebb, akkor nem jött le teljesen, leszedjük
+                    {
+                        retVal.flag = 0;
+                    }
                 }
-            } else{ // nincs a downloadok között, újrakezdjük
-                retVal.offset = 0;
-                f.resize(0);
+                else // nincs benne a metában - korábban már lejött
+                {
+                    if(fileSize == m.fileSize) // és a mérete megfelel, rendben vagyunk
+                    {
+                        retVal.flag=1;
+                    }
+                    else if(fileSize > metaSize) // ha nagyobb, akkor hibás
+                    {
+                        retVal.flag=2;
+                    }
+                    else // ha kisebb, akkor nem jött le teljesen, leszedjük
+                    {
+                        retVal.key = AddNewMeta(m);
+                    }
+                }
             }
-        }else{ // nincs meg a file, újrakezdjük
-            retVal.offset = 0;
-            f.open(QFile::OpenModeFlag::WriteOnly);
-            if(isMetaExists){
-                // eltűnt a fájl, újra kell kezdeni
-                int metaSize = _metaData[retVal.key].fileSize;
-                if(m.fileSize!=metaSize){
-                    _metaData[retVal.key]=m;
-
-                    SaveMeta();
+            else
+            { // nincs meg a file, el- vagy újrakezdjük
+                retVal.offset = 0;
+                f.open(QFile::OpenModeFlag::WriteOnly);
+                if(!isMetaExists)
+                {
+                    retVal.key = AddNewMeta(m);
                 }
-            } else{
-                retVal.key = MetaData::NewKey(_metaData);
-                _metaData.insert(retVal.key, m);
-                SaveMeta();
             }
         }
     }
 
     return retVal;
+}
+
+
+int UploadHelper::AddNewMeta(const MetaData& m){
+    int key = MetaData::NewKey(_metaData);
+    _metaData.insert(key, m);
+    SaveMeta();
+    return key;
 }
 
 QString UploadHelper::UploadModel::toString() const

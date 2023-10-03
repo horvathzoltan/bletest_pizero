@@ -48,6 +48,7 @@ public:
     static UploadResponseModel AddUpload(const MetaData& m);
     static UploadResponseModel Upload(const UploadModel &m, bool isBase64);
     static void SaveMeta();
+    static int AddNewMeta(const MetaData &m);
 };
 
 #endif // UPLOADHELPER_H
