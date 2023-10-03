@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.3, 2023-10-02T21:59:16. -->
+<!-- Written by QtCreator 11.0.3, 2023-10-03T19:00:18. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -267,9 +267,9 @@
     <value type="int" key="PE.EnvironmentAspect.Base">1</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">bletest_pizero (on %{Device:Name})2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinuxRunConfiguration:/home/zoli/source/repos/bletest_pizero/bletest_pizero.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/zoli/source/repos/bletest_pizero/bletest_pizero.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">bletest_pizero (on %{Device:Name})</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinuxRunConfiguration:/home/zoli/source/repos/bletest_pizero_old/bletest_pizero.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/zoli/source/repos/bletest_pizero_old/bletest_pizero.pro</value>
     <value type="int" key="RemoteLinux.EnvironmentAspect.Version">1</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
