@@ -152,11 +152,13 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
                     if(fileSize == metaSize) // és a mérete megfelel, rendben vagyunk
                     {
                         retVal.flag=1;
+                        RemoveMeta(retVal.key);
                         // letöltve, kiszedjük a metából
                     }
                     else if(fileSize > metaSize) // ha nagyobb, akkor hibás
                     {
                         retVal.flag=2;
+                        RemoveMeta(retVal.key);
                         // letöltve és hibás, kiszedjük a metábl
                     }
                     else // ha kisebb, akkor nem jött le teljesen, leszedjük
@@ -201,6 +203,14 @@ int UploadHelper::AddNewMeta(const MetaData& m){
     _metaData.insert(key, m);
     SaveMeta();
     return key;
+}
+
+void UploadHelper::RemoveMeta(int key){
+    bool contains = _metaData.contains(key);
+    if(contains){
+        _metaData.remove(key);
+        SaveMeta();
+    }
 }
 
 QString UploadHelper::UploadModel::toString() const
@@ -302,11 +312,11 @@ UploadHelper::UploadResponseModel UploadHelper::Upload(const UploadModel &m, boo
 
                     if(retVal.offset==metaData.fileSize){
                         zInfo("upload ok");
-                        _metaData.remove(m.key);
+                        RemoveMeta(m.key);
                         retVal.flag=1;
                     } else if(retVal.offset>metaData.fileSize){
                         zInfo("upload failed");
-                        _metaData.remove(m.key);
+                        RemoveMeta(m.key);
                         retVal.flag=2;
                     } else{
                         retVal.flag=0;
