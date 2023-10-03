@@ -87,8 +87,12 @@
 #include "bi/hwinfo.h"
 #include "global.h"
 #include "bi/instance.h"
+
 /*
- *
+ * origin git@github.com:horvathzoltan/bletest_pizero.git
+*/
+
+/*
  * edit/preferences/debugger/gdb/Additional Startup Program
  * set solib-search-path /home/zoli/pizero_bullseye/qt5.15/lib
  *
@@ -108,16 +112,17 @@
 */
 
 /*
-Custom Process Step: buildnum_ -p Insole02 -t /home/zoli/bletest_pizero/buildnumber.h
-Command: ~/buildnum_
-Arguments: -p Insole02 -t %{sourceDir}/bi/buildnumber.h
-Working directory: %{sourceDir}
+ * Custom Process Step: buildnum_ -p Insole02 -t /home/zoli/bletest_pizero/buildnumber.h
+ * Command: ~/buildnum_
+ * Arguments: -p Insole02 -t %{sourceDir}/bi/buildnumber.h -d %{buildDir}
+ * Working directory: %{sourceDir}
 */
 
 // -t commands,swinfo,instance,hwinfo,datalength,data
 
 // wifi reconnect:
 // echo "qw" | sudo -S -k wpa_cli -i wlan0 reconfigure
+
 extern Status status;
 
 int main(int argc, char *argv[])
@@ -145,7 +150,7 @@ int main(int argc, char *argv[])
     FileNameHelper::Init(QCoreApplication::applicationDirPath());
     WiringPiHelper::Init();
 
-    Updater::SetVerbose(true);
+    Updater::SetVerbose(false);
     // ha először indul, ez még nem az aktuális, és nem lesz felinitelve
     // a tesztprogram fogja a megfelelő rekordot bele felscpzni
     bool hwinfo_ok = HwInfo::Init();
