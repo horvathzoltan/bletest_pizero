@@ -3,6 +3,7 @@
 #include "helpers/textfilehelper.h"
 #include "uploadhelper.h"
 
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>

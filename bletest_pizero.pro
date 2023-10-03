@@ -23,6 +23,7 @@ SOURCES += \
         global.cpp \
         helpers/commandlineparserhelper.cpp \
         helpers/filenamehelper.cpp \
+        helpers/hashhelper.cpp \
         helpers/uploadhelper.cpp \
         helpers/wiringpihelper.cpp \
         helpers/logger.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/filenamehelper.h \
+    helpers/hashhelper.h \
     helpers/uploadhelper.h \
     helpers/wiringpihelper.h \
     helpers/logger.h \

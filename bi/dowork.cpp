@@ -10,6 +10,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QString>
+#include <helpers/hashhelper.h>
 
 extern Status status;
 
@@ -229,6 +230,13 @@ QByteArray DoWork::getip(const QString& data)
     return a;
 }
 
+QByteArray DoWork::hash(const QString& data)
+{
+    HashHelper::Model m = HashHelper::Model::Parse(data);
+    bool ok = HashHelper::Hash(m);
+    QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
+    return a;
+}
 
 // data: fileid: byte
 // ez bejegyzi egy id alatt
