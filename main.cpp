@@ -123,6 +123,9 @@
 // wifi reconnect:
 // echo "qw" | sudo -S -k wpa_cli -i wlan0 reconfigure
 
+/*
+ * git rm --cached bletest_pizero.pro.user*
+*/
 extern Status status;
 
 int main(int argc, char *argv[])

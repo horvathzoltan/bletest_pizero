@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QDir>
 
 bool FileNameHelper::_inited= false;
 QString FileNameHelper::_appDir;
