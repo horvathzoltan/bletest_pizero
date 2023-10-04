@@ -17,12 +17,16 @@ extern Status status;
 bool DoWork::_inited = false;
 DoWork::Params DoWork::_params = {};
 
-bool DoWork::init(Params p)
+bool DoWork::init(const Params& p)
 {
     _inited = false;
     _params = p;
     _inited = true;
     return _inited;;
+}
+
+QByteArray DoWork::GetResponse(bool ok){
+    return (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
 }
 
 QByteArray DoWork::maki()
@@ -186,7 +190,7 @@ QByteArray DoWork::data10(const QString& _data)
 QByteArray DoWork::update(const QString& data)
 {
     bool ok = Updater::Update(data);
-    QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
+    QByteArray a = GetResponse(ok);
     return a;
 }
 
@@ -234,7 +238,7 @@ QByteArray DoWork::hash(const QString& data)
 {
     HashHelper::Model m = HashHelper::Model::Parse(data);
     bool ok = HashHelper::Hash(m);
-    QByteArray a = (ok?QStringLiteral("Ok"):QStringLiteral("ERR")).toUtf8();
+    QByteArray a = GetResponse(ok);
     return a;
 }
 
@@ -246,17 +250,21 @@ QByteArray DoWork::uploadm(const QString& data){
     UploadHelper::MetaData m = UploadHelper::MetaData::Parse(data);
     UploadHelper::UploadResponseModel um = UploadHelper::AddUpload(m);
 
-    zInfo("uploadm:"+um.toString())
     QByteArray a = um.toString().toUtf8();
     return a;
 }
 
-//
+QByteArray DoWork::uploadr(const QString& data){
+    bool ok = UploadHelper::RemoveUpload(data);
+
+    QByteArray a = GetResponse(ok);
+    return a;
+}
+
 QByteArray DoWork::upload(const QString& data){
     UploadHelper::UploadModel m = UploadHelper::UploadModel::Parse(data);
     UploadHelper::UploadResponseModel um = UploadHelper::Upload(m, false);
 
-    zInfo("upload:"+um.toString())
     QByteArray a = um.toString().toUtf8();
     return a;
 }
@@ -265,7 +273,6 @@ QByteArray DoWork::upload2(const QString& data){
     UploadHelper::UploadModel m = UploadHelper::UploadModel::Parse(data);
     UploadHelper::UploadResponseModel um = UploadHelper::Upload(m, true);
 
-    zInfo("upload2:"+um.toString())
     QByteArray a = um.toString().toUtf8();
     return a;
 }
@@ -279,6 +286,8 @@ QByteArray DoWork::aaa(const QString &data)
 
 QByteArray DoWork::aab(const QString &data)
 {
+    Q_UNUSED(data)
+
     QString str = QStringLiteral("abcdefghijklmnokqrstuvwzxyzABCDEFGHIJKLMNOKQRSTUVWZXYZ");
     QByteArray a = str.toUtf8();
     return a;

@@ -12,11 +12,12 @@ public:
         BleApi* bleApi;
         QString test;
     };
+
 private:
     static bool _inited;
     static Params _params;
-public:        
-    static bool init(Params p);
+public:
+    static bool init(const Params &p);
 
     static bool isTest(){ return !_params.test.isEmpty();}
 
@@ -43,6 +44,8 @@ public:
     static QByteArray upload(const QString& data);
     static QByteArray upload2(const QString& data);
     static QByteArray uploadm(const QString& data);
+    static QByteArray uploadr(const QString& data);
+
     static QByteArray aaa(const QString& data);
     static QByteArray aab(const QString& data);
     static QByteArray hash(const QString& data);
@@ -55,6 +58,7 @@ public:
     // beállítások, kulcs-érték pár mentése
     //static bool settings1(const QByteArray& data);
     static void Test();
+    static QByteArray GetResponse(bool ok);
 };
 
 #endif // DOWORK_H

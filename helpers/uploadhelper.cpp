@@ -113,6 +113,39 @@ void UploadHelper::SaveMeta(){
     zInfo(QStringLiteral("SaveMeta:")+(metaSaved?"ok":"failed"))
 }
 
+bool UploadHelper::RemoveUpload(const QString& fileName){
+    bool retVal = false;
+
+    bool valid = !fileName.isEmpty();
+    if(valid)
+    {
+        bool noMeta = _metaData.empty();
+        if(noMeta){
+            LoadMeta();
+        }
+        int key = MetaData::Find(_metaData, fileName);
+        bool isMetaExists = key>-1;
+        bool ok1=false, ok2=false;
+
+        if(isMetaExists){
+            RemoveMeta(key);
+            ok1 = true;
+        }
+
+        QString upd = FileNameHelper::UploadFileName(fileName);
+        QFile f(upd);
+
+        bool isFileExists = f.exists();
+        if(isFileExists){
+            ok2 = f.remove();
+        }
+
+        retVal = ok1||ok2;//valamelyik sikerült, akkor jó
+    }
+
+    return retVal;
+}
+
 UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
 {
     UploadResponseModel retVal;

@@ -45,6 +45,7 @@ private:
     static void LoadMeta();
 
 public:
+    static bool RemoveUpload(const QString &fileName);
     static UploadResponseModel AddUpload(const MetaData& m);
     static UploadResponseModel Upload(const UploadModel &m, bool isBase64);
     static void SaveMeta();

@@ -212,6 +212,8 @@ int main(int argc, char *argv[])
     bleApi.addrequest(DoWork::upload);
     bleApi.addrequest(DoWork::upload2);
     bleApi.addrequest(DoWork::uploadm);
+    bleApi.addrequest(DoWork::uploadr);
+
     bleApi.addrequest(DoWork::aaa);
     bleApi.addrequest(DoWork::aab);
 
