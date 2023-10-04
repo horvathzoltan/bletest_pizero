@@ -123,6 +123,10 @@
 // wifi reconnect:
 // echo "qw" | sudo -S -k wpa_cli -i wlan0 reconfigure
 
+/*
+ * git rm bletest_pizero.pro.user*
+ * git rm --cached bletest_pizero.pro.user*
+*/
 extern Status status;
 
 int main(int argc, char *argv[])
@@ -210,6 +214,8 @@ int main(int argc, char *argv[])
     bleApi.addrequest(DoWork::uploadm);
     bleApi.addrequest(DoWork::aaa);
     bleApi.addrequest(DoWork::aab);
+
+    bleApi.addrequest(DoWork::hash);
 
     bleApi.addrequest(DoWork::restart);
     //bleApi.addrequest(DoWork::reboot);

@@ -2,10 +2,10 @@
 #define BUILDNUMBER_H
 
 <<<<<<< HEAD
-#define BUILDNUMBER 1067
+#define BUILDNUMBER 1198
 =======
 #define BUILDNUMBER -1
->>>>>>> f1913e2b52420f892b7b34d68d4256d2b0a5e849
+>>>>>>> 0b350fe4f24276901a10a1d37f9082b0a849b0d5
 
 #include <QString>
 

@@ -45,6 +45,7 @@ public:
     static QByteArray uploadm(const QString& data);
     static QByteArray aaa(const QString& data);
     static QByteArray aab(const QString& data);
+    static QByteArray hash(const QString& data);
 
     //static QByteArray checkupdate(const QString& data);
     static QByteArray restart(const QString& data);    
