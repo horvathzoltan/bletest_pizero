@@ -56,7 +56,10 @@ compile_commands.json
 debug/
 saves/
 
+# CNC
 *.gcode
 *.stl
 
+# merge
+*.orig
 
