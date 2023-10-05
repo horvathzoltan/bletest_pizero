@@ -148,6 +148,7 @@ bool UploadHelper::RemoveUpload(const QString& fileName){
 
 UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
 {
+    zInfo("AddUpload...");
     UploadResponseModel retVal;
     bool valid = m.isValid();
 
@@ -167,10 +168,11 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
         bool valid = isUdPathExists && (!isMetaExists || metaSize==m.fileSize);
         if(!valid)
         {
-             zInfo("udPath: not exists")
+            zInfo("AddUpload:valid");
         }
         else
         {
+             zInfo("AddUpload:not valid");
             QString upd = FileNameHelper::UploadFileName(m.fileName);
             QFile f(upd);
 
@@ -180,9 +182,11 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
             //ha a fájl létezik
             if(isFileExists)
             {
+                zInfo("AddUpload:file exists");
                 retVal.offset = fileSize;
                 if(isMetaExists) // és megvan a downloadok között, is,
                 {
+                    zInfo("AddUpload:meta exists");
                     if(fileSize == metaSize) // és a mérete megfelel, rendben vagyunk
                     {
                         retVal.flag=1;
@@ -202,6 +206,7 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
                 }
                 else // nincs benne a metában - korábban már lejött
                 {
+                    zInfo("AddUpload:meta not exists");
                     if(fileSize == m.fileSize) // és a mérete megfelel, rendben vagyunk
                     {
                         retVal.flag=1;
@@ -212,13 +217,17 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
                     }
                     else // ha kisebb, akkor nem jött le teljesen, leszedjük
                     {
+                        retVal.flag = 0;
                         retVal.key = AddNewMeta(m);
                     }
                 }
             }
             else
             { // nincs meg a file, el- vagy újrakezdjük
+                zInfo("AddUpload:file not exists");
                 retVal.offset = 0;
+                retVal.flag = 0;
+
                 f.open(QFile::OpenModeFlag::WriteOnly);
                 if(!isMetaExists)
                 {
@@ -228,6 +237,7 @@ UploadHelper::UploadResponseModel UploadHelper::AddUpload(const MetaData &m)
         }
     }
 
+    zInfo("AddUpload:"+retVal.toString());
     return retVal;
 }
 

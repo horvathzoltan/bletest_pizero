@@ -33,7 +33,7 @@ public:
     struct UploadResponseModel{
         int key=-1;
         int offset=-1;
-        int flag=0;
+        int flag=-1;
 
         QString toString() const;
     };
